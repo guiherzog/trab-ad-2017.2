@@ -1,0 +1,21 @@
+{
+  "name": "adsimulador",
+  "version": "1.0.0",
+  "description": "Simulador de Filas com Prioridade - AD 2017.2.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/guiherzog/trab-ad-2017.2",
+  "keywords": [
+    "ad",
+    "simulator",
+    "ufrj",
+    "queue"
+  ],
+  "author": "Guilherme Herzog, Lucas Carneiro, Eduardo Costa",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "~1.6.2"
+  }
+}
