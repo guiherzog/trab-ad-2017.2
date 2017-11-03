@@ -10,6 +10,15 @@ class Queue {
 		this.type = type;
 		this.priority = priority;
 		this.arrivalRate = arrivalRate;
+
+		// Esperanças:
+		this.N;
+		this.Nq;
+		this.W;
+		this.X;
+
+		// Varianças:
+		this.varW;
 	}
 }
 

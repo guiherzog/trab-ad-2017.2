@@ -4,7 +4,7 @@
 class Utils {
 	// Gera um tempo de serviço exponencial e independente de outros.
 	static getServiceRate(){
-		return Math.log(1 - Math.random());
+		return - Math.log(1 - Math.random());
 	}
 }
 

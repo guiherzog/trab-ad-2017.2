@@ -7,12 +7,12 @@ const { Customer } = require('./Customer');
 class QueueSystem {
 	constructor(){
 		this.queue1 = new Queue('LCFS', 1, 1.2, 0.2);
-		this.queue2 = new Queue();
+		this.queue2 = new Queue('LCFS', 1, 1.2, 0.2);
 		this.customer = new Customer();
 	}
 
-	runSimulation(nCustomers, nRounds){
-		console.log(`Rodando simulação com ${nCustomers} fregueses e ${nRounds} partidas`);
+	runSimulation(nCustomers, nRounds, rho){
+		console.log(`Rodando simulação com ${nCustomers} fregueses e ${nRounds} partidas com rho = ${rho}`);
 	}
 }
 
