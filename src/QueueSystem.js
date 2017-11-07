@@ -9,6 +9,10 @@ class QueueSystem {
 		this.queue1 = new Queue('LCFS', 1, 1.2, 0.2);
 		this.queue2 = new Queue('LCFS', 1, 1.2, 0.2);
 		this.customer = new Customer();
+
+		this.currentCustomers;
+		this.currentRounds;
+		this.currentRho;
 	}
 
 	runSimulation(nCustomers, nRounds, rho){
