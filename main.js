@@ -21,7 +21,7 @@ function createWindow () {
   })
 
   // Remove menu;
-  mainWindow.setMenu(null);
+  // mainWindow.setMenu(null);
 
   mainWindow.maximize();
 
