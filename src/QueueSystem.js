@@ -8,49 +8,27 @@ const { EventType } = require('./EventType');
 	Classe principal responsável por controlar todo o sistema.
 */
 class QueueSystem {
-
-	constructor(){
-		//this.queue1 = new Queue('LCFS', 1, 1.2, 0.2); // type, priority, arrivalRate, serviceRate
-		//this.queue2 = new Queue('LCFS', 1, 1.2, 0.2);
-		//this.customer = new Customer();
-
-		this.currentCustomers;
-		this.currentRounds;
-		this.currentRho;
-	}
-
+	/* 
+		Roda uma simulação com n fregueses, n vezes.
+		Calculando o lambda e mi de modo a manter o rho definido no parametro.
+	*/
 	runSimulation(nCustomers, nRounds, rho){
-
 		let lambda = rho/2;
 		let mi = 1/2;
-
-
-		// cria fila
-		//let fila = new Queue('FCFS', 1, lambda, mi); // type, priority, arrivalRate, serviceRate
-
-
-		// E: T1, W1, N1, Nq1
-		//    T2, W2, N2, Nq2
-		
-		// Var: W1, W2
-
-
 		let results = [];
 
 		for(let i = 0; i < nRounds; i++) {
 			let roundResult = this.runRound(nCustomers, lambda, mi);
 			results.push(roundResult);
-			//console.log(roundResult);
 		}
-
-		
-
 	}
 
-
+	/*
+		Adiciona um evento na lista de eventos.
+	*/
 	addEvent(events, newEvent) {
 		let newEventTime = newEvent.time;
-		let pos = events.findIndex(function(e) { return e.time > newEventTime });
+		let pos = events.findIndex(e => e.time > newEventTime);
  		
  		// servidor vazio (events vazio ou newEvent será o último)
 		if(pos == -1) return events.push(newEvent) - 1;
@@ -59,10 +37,12 @@ class QueueSystem {
 		return pos;
 	}
 
+	/* 
+		Executa uma rodada da simulação com n fregueses.
+	*/
 	runRound(nCustomers, lambda, mi) {
 
 		let events = [];
-
 		let arrivalTime = 0;
 
 		for(let i = 0; i < nCustomers; i++) {
@@ -70,13 +50,15 @@ class QueueSystem {
 			let service1Time = Utils.getRandomExp(mi);
 			let service2Time = Utils.getRandomExp(mi); 
 
-			console.log("arrivalTime = " + arrivalTime + ", s1time = " + service1Time + ", s2time = " + service2Time);
-
-
+			console.log(`
+		Fregues ${i}:
+			Tempo Chegada = ${arrivalTime},
+			Serviço 1 = ${service1Time},
+			Serviço 2 = ${service2Time}
+			`);
 
 			// evento de chegada no sistema - sem mistério
 			let arrival = new Event(arrivalTime, i, EventType.SYSTEM_ARRIVAL, 1);
-			console.log(arrival);
 			let arrivalEventPos = this.addEvent(events, arrival);
 
 
@@ -107,7 +89,6 @@ class QueueSystem {
 				start1EventPos = this.addEvent(events, start1);
 			}
 
-
 			// como a fila 1 tem prioridade, devemos agora atualizar todos os eventos
 			// da fila 2 (início e fim de serviço 2) que vem depois, somando um offset
 			// ao tempo deles (esse offset será o tempo do serviço 1 do freguês atual)
@@ -115,7 +96,6 @@ class QueueSystem {
 				let event = events[j];
 				event.time += service1Time; // offset será o tempo do serviço 1 do freguês atual
 			}
-
 
 			// fim do servico 1 do freguês autal = inicio + o tempo de serviço 1
 			let end1 = new Event(service1Start + service1Time, i, EventType.SERVICE_END, 1);
@@ -125,7 +105,6 @@ class QueueSystem {
 			}
 			else
 				this.addEvent(events, end1);
-
 
 			// checar se service1Start caiu no meio de um serviço 2 em execucao
 			// (está entre um inicio servico 2 e fim servico 2)
@@ -146,7 +125,6 @@ class QueueSystem {
 				this.addEvent(events, resume);
 			}
 
-
 			// colocar inicio e fim do serviço 2 do freguês atual no fim da lista de eventos
 			let lastEventTime = events[events.length-1].time;
 			let start2 = new Event(lastEventTime, i, EventType.SERVICE_START, 2);
@@ -154,101 +132,9 @@ class QueueSystem {
 			let end2 = new Event(lastEventTime + service2Time, i, EventType.SERVICE_END, 2);
 			this.addEvent(events, end2);
 
-
 			// TODO calcular Nq, Ns, N, etc, desse novo freguês
-
 		}
-
-
 		console.table(events);
-
-		
-/*
-		// cria fregueses e adiciona na fila
-		let customers = [];
-
-		// primeiro freguês
-		let arrival = Utils.getRandomExp(lambda);
-		let executionStart = arrival;
-
-		let serviceTime = Utils.getRandomExp(mi);
-
-		let customer = new Customer(arrival, executionStart, serviceTime, 0, 0);
-		customers.push(customer);
-
-
-		// fregueses depois do primeiro
-		for(let i = 1; i < nCustomers; i++) {
-			arrival += Utils.getRandomExp(lambda);
-			executionStart = Math.max(arrival, customers[i-1].executionEnd);
-
-			serviceTime = Utils.getRandomExp(mi);
-
-			// pessoas na fila com executionStart > arrival do atual;
-			let Nq = 0;
-			for(let j = i-1; j >= 0; j--) {
-				let c = customers[j];
-				if(c.executionStart >= arrival) Nq++;
-				else break;
-			}
-
-			// tem alguém que satisfaz executionStart <= arrival <= executionEnd
-			let Ns = 0;
-			for(let j = i-1; j >= 0; j--) {
-				let c = customers[j];
-
-				if(arrival <= c.executionEnd && arrival > c.executionStart) {
-					Ns++;
-					break;
-				}
-
-				if(c.executionEnd < arrival)
-					break;
-			}
-
-			//console.log("Nq = " + Nq + ", Ns = " + Ns);
-
-			let customer = new Customer(arrival, executionStart, serviceTime, Nq, Ns);
-			customers.push(customer);
-		}
-
-
-		//console.log(customers);
-
-		let waitSum = 0;
-		for(let i = 0; i < nCustomers; i++) waitSum += customers[i].wait;
-		let waitAvg = waitSum / nCustomers;
-
-		let serviceSum = 0;
-		for(let i = 0; i < nCustomers; i++) serviceSum += customers[i].serviceTime;
-		let serviceAvg = serviceSum / nCustomers;
-
-		let timeAvg = waitAvg + serviceAvg;
-
-
-		let nQueueSum = 0;
-		for(let i = 0; i < nCustomers; i++) nQueueSum += customers[i].Nq;
-		let nQueueAvg = nQueueSum / nCustomers;
-
-		let nServiceSum = 0;
-		for(let i = 0; i < nCustomers; i++) nServiceSum += customers[i].Ns;
-		let nServiceAvg = nServiceSum / nCustomers;
-
-		let nAvg = nQueueAvg + nServiceAvg;
-
-		//console.log(`Rodando simulação com ${nCustomers} fregueses e ${nRounds} partidas com rho = ${rho}`);
-
-
-		return {
-			'waitAvg': waitAvg,       // W
-			'serviceAvg': serviceAvg, // X
-			'timeAvg': timeAvg,       // T
-
-			'nQueueAvg': nQueueAvg,     // Nq
-			'nServiceAvg': nServiceAvg, // Ns
-			'nAvg': nAvg,               // N
-		}
-*/
 	}
 }
 

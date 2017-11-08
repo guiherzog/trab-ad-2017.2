@@ -12,8 +12,6 @@
 	- Prioridade
 
 */
-
-
 class Event {
 	constructor(time, customerId, type, priority){
 		this.time = time;
