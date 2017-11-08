@@ -51,6 +51,10 @@ class QueueSystem {
 	runRound(nCustomers, lambda, mi) {
 
 		let events = [];
+		let Ns1 = [];
+		let Ns2 = [];
+		let Nq1 = [];
+		let Nq2 = [];
 		let arrivalTime = 0;
 
 		for(let i = 1; i <= nCustomers; i++) {
@@ -143,9 +147,86 @@ Fregues ${i}:
 			let end2 = new Event(lastEventTime + service2Time, i, EventType.SERVICE_END, 2);
 			this.addEvent(events, end2);
 
-			// TODO calcular Nq, Ns, N, etc, desse novo freguês
+			// TODO calcular Nq1, Ns1, N, etc, desse novo freguês
+			// Nq1 = Quantos chegaram antes dele -  quantos iniciaram serviço 1 antes dele.
+			Nq1[i] = 0;
+			for (let j = 0; j < arrivalEventPos; j++) {
+				// console.log(`i=${i} j=${j} Nq1=${Nq1[i]}`);
+				let ev = events[j];
+				if (ev.type == EventType.SYSTEM_ARRIVAL)
+					Nq1[i]++;
+				else if (ev.type == EventType.SERVICE_START &&
+						 ev.priority == 1)
+					Nq1[i]--;
+			}
+
+			Nq2[i] = 0;
+			/* 
+				Nq2 = 
+					Quantos chegaram na fila 2 (terminaram serviço 1 ou foram interrompidos)
+					subtraídos de
+					Quantos começaram o serviço 2 (inicio serviço 2 ou continuação serviço 2)
+			*/
+			for (let j = 0; j < arrivalEventPos; j++) {
+				let ev = events[j];
+				// Chegou na fila 2 (= terminou serviço 1).
+				if (ev.type === EventType.SERVICE_END && ev.priority === 1)
+					Nq2[i]++;
+				// Chegou na fila 2 por ter sido interrompido.
+				else if (ev.type === EventType.SERVICE_INTERRUPTION && ev.priority === 2)
+					Nq2[i]++;
+				// Começou serviço 2 do inicio.
+				else if (ev.type === EventType.SERVICE_START && ev.priority === 2)
+					Nq2[i]--;
+				// Recomeçou serviço 2 após interrupção.
+				else if (ev.type === EventType.SERVICE_RESUME && ev.priority === 2)
+					Nq2[i]--;
+			}
+
+			Ns1[i] = 0;
+			/*
+				 Ns1 = Quantos iniciaram o serviço 1 antes dele - Quantos terminaram o serviço 1 antes dele.
+			*/
+			for (let j = 0; j < arrivalEventPos; j++) {
+				// console.log(`i=${i} j=${j} Nq1=${Nq1[i]}`);
+				let ev = events[j];
+				if (ev.type == EventType.SERVICE_START && ev.priority == 1)
+					Ns1[i]++;
+				else if (ev.type == EventType.SERVICE_END && ev.priority == 1)
+					Ns1[i]--;
+			}
+
+			Ns2[i] = 0;
+			/*
+				 Ns1 = Quantos iniciaram o serviço 1 antes dele - Quantos terminaram o serviço 1 antes dele.
+			*/
+			for (let j = 0; j < arrivalEventPos; j++) {
+				// console.log(`i=${i} j=${j} Nq1=${Nq1[i]}`);
+				let ev = events[j];
+				// Começou serviço 2 do inicio.
+				if (ev.type === EventType.SERVICE_START && ev.priority === 2)
+					Ns2[i]++;
+				// Recomeçou serviço 2 após interrupção.
+				else if (ev.type === EventType.SERVICE_RESUME && ev.priority === 2)
+					Ns2[i]++;
+				// Parou serviço por ter sido interrompido.
+				else if (ev.type == EventType.SERVICE_INTERRUPTION && ev.priority == 2)
+					Ns2[i]--;
+				// Terminou o serviço 2.
+				else if (ev.type == EventType.SERVICE_END && ev.priority == 2)
+					Ns2[i]--;
+			}
+
 		}
 		console.table(events);
+		console.log('# Pessoas esperando na fila 1:');
+		console.log(Nq1);
+		console.log('# Pessoas esperando na fila 2:');
+		console.log(Nq2);
+		console.log('# Pessoas em serviço 1:');
+		console.log(Ns1);
+		console.log('# Pessoas em serviço 2:');
+		console.log(Ns2);
 	}
 }
 
