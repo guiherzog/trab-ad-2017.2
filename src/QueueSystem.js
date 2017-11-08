@@ -55,12 +55,18 @@ class QueueSystem {
 		let Ns2 = [];
 		let Nq1 = [];
 		let Nq2 = [];
+		let W1 = [];
+		let W2 = [];
+		let X1 = [];
+		let X2 = [];
 		let arrivalTime = 0;
 
 		for(let i = 1; i <= nCustomers; i++) {
 			arrivalTime += Utils.getRandomExp(lambda);
 			let service1Time = Utils.getRandomExp(mi);
 			let service2Time = Utils.getRandomExp(mi); 
+			X1[i] = service1Time;
+			X2[i] = service2Time;
 
 			console.log(`
 Fregues ${i}:
@@ -88,6 +94,9 @@ Fregues ${i}:
 			let service1Start = Math.max(arrivalTime, lastService1End);
 			let start1 = new Event(service1Start, i, EventType.SERVICE_START, 1);
 
+			// espera na fila 1 = "inicio servico 1" - "chegou no sistema"
+			W1[i] = service1Start - arrivalTime;
+
 			let start1EventPos;
 
 			// tem servico 1 em andamento, vou adicionar logo depois de um fim de servico 1
@@ -107,6 +116,9 @@ Fregues ${i}:
 			for(let j = start1EventPos+1; j < events.length; j++) {
 				let event = events[j];
 				event.time += service1Time; // offset será o tempo do serviço 1 do freguês atual
+
+				// somar esse atraso no tempo de espera do cara na fila 2: 
+				W2[event.customerId] += service1Time;
 			}
 
 			// fim do servico 1 do freguês autal = inicio + o tempo de serviço 1
@@ -142,10 +154,19 @@ Fregues ${i}:
 
 			// colocar inicio e fim do serviço 2 do freguês atual no fim da lista de eventos
 			let lastEventTime = events[events.length-1].time;
-			let start2 = new Event(lastEventTime, i, EventType.SERVICE_START, 2);
+			let sevice2Start = lastEventTime;
+
+			let start2 = new Event(sevice2Start, i, EventType.SERVICE_START, 2);
 			this.addEvent(events, start2);
-			let end2 = new Event(lastEventTime + service2Time, i, EventType.SERVICE_END, 2);
+			let end2 = new Event(sevice2Start + service2Time, i, EventType.SERVICE_END, 2);
 			this.addEvent(events, end2);
+
+			let service1End = service1Start + service1Time;
+
+			// tempo inical na fila 2: "inicio servico 2" - "chegou na fila 2"
+			// ("chegou na fila 2" = "fim servico 1")
+			W2[i] = sevice2Start - service1End;
+
 
 			// TODO calcular Nq1, Ns1, N, etc, desse novo freguês
 			// Nq1 = Quantos chegaram antes dele -  quantos iniciaram serviço 1 antes dele.
@@ -219,14 +240,26 @@ Fregues ${i}:
 
 		}
 		console.table(events);
-		console.log('# Pessoas esperando na fila 1:');
+
+		console.log('Nq1 (número de pessoas esperando na fila 1):');
 		console.log(Nq1);
-		console.log('# Pessoas esperando na fila 2:');
+		console.log('Nq2 (número de pessoas esperando na fila 2):');
 		console.log(Nq2);
-		console.log('# Pessoas em serviço 1:');
+
+		console.log('Ns1 (número de pessoas em serviço 1):');
 		console.log(Ns1);
-		console.log('# Pessoas em serviço 2:');
+		console.log('Ns2 (número de pessoas em serviço 2):');
 		console.log(Ns2);
+
+		console.log('W1 (tempo de espera na fila 1)');
+		console.log(W1);
+		console.log('W2 (tempo de espera na fila 2)');
+		console.log(W2);
+
+		console.log('X1 (tempo em execução do serviço 1)');
+		console.log(X1);
+		console.log('X2 (tempo em execução do serviço 2)');
+		console.log(X2);
 	}
 }
 

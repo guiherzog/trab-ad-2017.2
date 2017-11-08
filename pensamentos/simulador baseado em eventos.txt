@@ -113,7 +113,7 @@ Exemplo:
 			fila 2: 
 				- tempo inical na fila: "inicio servico 2" - "fim servico 1"
 				- tempo na fila por causa das interrupções: 
-					"continuacao servico 2" - "interrupcao servico 2"
+					"continuacao servico 2" - "interrupcao servico 2" (este atraso é jutamente o X1 do cara que interrompeu)
 					(para cada interrupcao)
 				- somar todos esses tempos
 
