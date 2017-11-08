@@ -7,8 +7,12 @@ const seedrandom = require('seedrandom');
 		123456: fregues 2 chega durante serviço 1 do fregues 1.
 		'test': fregues 2 chega durante serviço 2 do fregues 1 (causando interrupção).
 		   240: fregues 2 chega depois do fregues 1 terminar tudo.
+
+	Seeds úteis (testes com 3 fregueses):
+		123456: fregues i+1 chega durante serviço 1 do fregues i (sem interrupções).
+		'test': fregues 1 é interrompido 2x.
 */
-const randomSeed = seedrandom(123456);
+const randomSeed = seedrandom('test');
 
 class Utils {
 	// Gera um tempo de serviço exponencial e independente de outros.

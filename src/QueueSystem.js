@@ -39,6 +39,14 @@ class QueueSystem {
 
 	/* 
 		Executa uma rodada da simulação com n fregueses.
+
+		Teste com fila D/D/1:
+			arrivalTime += 1;
+			service1Time = 1;
+			service2Time = 2;
+
+		Fregues 1 começa a execução do serviço 2 no mesmo instante que o fregues 2 chega e é interrompido com zero segundos.
+
 	*/
 	runRound(nCustomers, lambda, mi) {
 
@@ -57,7 +65,7 @@ Fregues ${i}:
 	Serviço 2 = ${service2Time}
 			`);
 
-			// evento de chegada no sistema - sem mistério
+			// Evento de chegada no sistema
 			let arrival = new Event(arrivalTime, i, EventType.SYSTEM_ARRIVAL, 1);
 			let arrivalEventPos = this.addEvent(events, arrival);
 
