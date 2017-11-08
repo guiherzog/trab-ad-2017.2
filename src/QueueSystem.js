@@ -97,7 +97,7 @@ class QueueSystem {
 			let start1EventPos;
 
 			// tem servico 1 em andamento, vou adicionar logo depois de um fim de servico 1
-			if(lastService1EndPos > 0) {
+			if(lastService1End > arrivalTime && lastService1EndPos > 0) {
 				events.splice(lastService1EndPos+1, 0, start1);
 				start1EventPos = lastService1EndPos+1;
 			}
@@ -119,7 +119,12 @@ class QueueSystem {
 
 			// fim do servico 1 do freguês autal = inicio + o tempo de serviço 1
 			let end1 = new Event(service1Start + service1Time, i, EventType.SERVICE_END, 1);
-			this.addEvent(events, end1);
+			// se tinha serviço 1 em andamento
+			if(lastService1End > arrivalTime && lastService1EndPos > 0) {
+				events.splice(lastService1EndPos+2, 0, end1);
+			}
+			else
+				this.addEvent(events, end1);
 
 
 			// checar se service1Start caiu no meio de um serviço 2 em execucao
@@ -133,7 +138,10 @@ class QueueSystem {
 				let customerId = events[arrivalEventPos-1].customerId;
 				
 				let interruption = new Event(arrivalTime, customerId, EventType.SERVICE_INTERRUPTION, 2);
-				this.addEvent(events, interruption);
+				//this.addEvent(events, interruption);
+				// adicionando evento da interrupção antes do evento de início do serviço 1 do cara que interrompeu
+				events.splice(start1EventPos, 0, interruption);
+
 				let resume = new Event(arrivalTime + service1Time, customerId, EventType.SERVICE_RESUME, 2);
 				this.addEvent(events, resume);
 			}
@@ -152,8 +160,9 @@ class QueueSystem {
 		}
 
 
-
 		console.table(events);
+
+		
 /*
 		// cria fregueses e adiciona na fila
 		let customers = [];
