@@ -1,0 +1,12 @@
+Testes úteis:
+	Seeds úteis (testes com 2 fregueses):
+		123456: fregues 2 chega durante serviço 1 do fregues 1.
+		'test': fregues 2 chega durante serviço 2 do fregues 1 (causando interrupção).
+		   240: fregues 2 chega depois do fregues 1 terminar tudo.
+
+	Seeds úteis (testes com 3 fregueses):
+		123456: fregues i+1 chega durante serviço 1 do fregues i (sem interrupções).
+		'test': fregues 1 é interrompido 2x.
+
+	QueueSystem1.runSimulation(3, 1, 0.9);
+		Dois fregueses chegam num intervalo muito próximo.
