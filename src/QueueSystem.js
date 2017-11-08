@@ -114,11 +114,14 @@ Fregues ${i}:
 			else
 				this.addEvent(events, end1);
 
-			// checar se service1Start caiu no meio de um serviço 2 em execucao
-			// (está entre um inicio servico 2 e fim servico 2)
-			// o evento logo antes da chegada é início de serviço 2
+			/* 
+				Checar se service1Start caiu no meio de um serviço 2 em execucao
+				(está entre um inicio servico 2 e fim servico 2)
+				o evento logo antes da chegada é início de serviço 2 
+			*/
 			if(arrivalEventPos > 0 &&
-			   events[arrivalEventPos-1].type == EventType.SERVICE_START &&
+			   (events[arrivalEventPos-1].type == EventType.SERVICE_START ||
+			   events[arrivalEventPos-1].type == EventType.SERVICE_RESUME) &&
 			   events[arrivalEventPos-1].priority == 2) {
 				// criar interrupcao e continuacao do serviço 2 no qual eu caí no meio
 
