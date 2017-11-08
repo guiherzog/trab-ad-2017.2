@@ -18,7 +18,6 @@ class Event {
 		this.customerId = customerId;
 		this.type = type;
 		this.priority = priority;
-
 	}
 }
 

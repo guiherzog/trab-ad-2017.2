@@ -45,16 +45,16 @@ class QueueSystem {
 		let events = [];
 		let arrivalTime = 0;
 
-		for(let i = 0; i < nCustomers; i++) {
+		for(let i = 1; i <= nCustomers; i++) {
 			arrivalTime += Utils.getRandomExp(lambda);
 			let service1Time = Utils.getRandomExp(mi);
 			let service2Time = Utils.getRandomExp(mi); 
 
 			console.log(`
-		Fregues ${i}:
-			Tempo Chegada = ${arrivalTime},
-			Serviço 1 = ${service1Time},
-			Serviço 2 = ${service2Time}
+Fregues ${i}:
+	Tempo Chegada = ${arrivalTime},
+	Serviço 1 = ${service1Time},
+	Serviço 2 = ${service2Time}
 			`);
 
 			// evento de chegada no sistema - sem mistério
