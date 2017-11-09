@@ -61,7 +61,9 @@ class QueueSystem {
 		let X2 = [];
 		let arrivalTime = 0;
 
-		for(let i = 1; i <= nCustomers; i++) {
+		let customerIndexStartsFrom = 1;
+
+		for(let i = customerIndexStartsFrom; i <= nCustomers; i++) {
 			arrivalTime += Utils.getRandomExp(lambda);
 			let service1Time = Utils.getRandomExp(mi);
 			let service2Time = Utils.getRandomExp(mi); 
@@ -168,7 +170,6 @@ Fregues ${i}:
 			W2[i] = sevice2Start - service1End;
 
 
-			// TODO calcular Nq1, Ns1, N, etc, desse novo freguês
 			// Nq1 = Quantos chegaram antes dele -  quantos iniciaram serviço 1 antes dele.
 			Nq1[i] = 0;
 			for (let j = 0; j < arrivalEventPos; j++) {
@@ -260,6 +261,50 @@ Fregues ${i}:
 		console.log(X1);
 		console.log('X2 (tempo em execução do serviço 2)');
 		console.log(X2);
+
+		/*
+		Length de um array em js não é o número de elementos, mas sim "maior índice + 1".
+
+		Quando os elementos são adicionados sequencialmente a partir do índice 0, a length
+		realmente será o número de elementos no array. Porém, quando começamos os índices em 1,
+		e adicionadomos sequencialmente a partir daí, a length será "número de elementos" + 1.
+
+		Para isso foi usado o customerIndexStartsFrom.
+		*/
+
+		let Nq1Avg = Nq1.reduce((a,b) => (a+b)) / (Nq1.length-customerIndexStartsFrom);
+		let Nq2Avg = Nq2.reduce((a,b) => (a+b)) / (Nq2.length-customerIndexStartsFrom);
+		let Ns1Avg = Ns1.reduce((a,b) => (a+b)) / (Ns1.length-customerIndexStartsFrom);
+		let Ns2Avg = Ns2.reduce((a,b) => (a+b)) / (Ns2.length-customerIndexStartsFrom);
+		let N1Avg = Nq1Avg + Ns1Avg;
+		let N2Avg = Nq2Avg + Ns2Avg;
+
+		let W1Avg = W1.reduce((a,b) => (a+b)) / (W1.length-customerIndexStartsFrom);
+		let W2Avg = W2.reduce((a,b) => (a+b)) / (W2.length-customerIndexStartsFrom);
+		let X1Avg = X1.reduce((a,b) => (a+b)) / (Nq1.length-customerIndexStartsFrom);
+		let X2Avg = X1.reduce((a,b) => (a+b)) / (Nq1.length-customerIndexStartsFrom);
+		let T1Avg = W1Avg + X1Avg;
+		let T2Avg = W2Avg + X2Avg;
+
+		console.log(`
+Valores médios:
+
+	Nq1 médio = ${Nq1Avg}
+	Ns1 médio = ${Ns1Avg}
+	N1  médio = ${N1Avg}
+
+	Nq2 médio = ${Nq2Avg}
+	Ns2 médio = ${Ns2Avg}
+	N2  médio = ${N2Avg}
+
+	W1 médio = ${W1Avg}
+	X1 médio = ${X1Avg}
+	T1 médio = ${T1Avg}
+
+	W2 médio = ${W2Avg}
+	X2 médio = ${X2Avg}
+	T2 médio = ${T2Avg}
+	`);
 	}
 }
 
