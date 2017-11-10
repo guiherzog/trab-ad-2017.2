@@ -20,13 +20,6 @@
 			<div class="container-fluid">
 				<nav class="navbar navbar-transparent navbar">
 					<div class="container-fluid">
-						<button type="button" class="navbar-toggle" data-toggle="collapse">
-							<span class="sr-only">Toggle navigation</span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-							<span class="icon-bar"></span>
-						</button>
-						<!-- Top menu with steps buttons -->
 						<div class="collapse navbar-collapse">
 							<div class="navbar-header">
 								<ul class="nav navbar-nav navbar-left">
@@ -34,26 +27,26 @@
 									<li>
 										<a id="playButton" href="#pablo" class="dropdown-toggle" data-toggle="dropdown">
 											<i class="material-icons">play_arrow</i>
-											<p class="hidden-lg hidden-md">Próximo tempo.</p>
+											<p class="hidden-lg hidden-md">Executar Rodada.</p>
 										</a>
 									</li>
 									<li>
 										<a id="playAllButton" href="#pablo" class="dropdown-toggle" data-toggle="dropdown">
 											<i class="material-icons">fast_forward</i>
-											<p class="hidden-lg hidden-md">Rodar até o final.</p>
+											<p class="hidden-lg hidden-md">Executar todas rodadas.</p>
 										</a>
 									</li>
 									<li>
 										<a id="stopButton" href="#pablo" class="dropdown-toggle" data-toggle="dropdown">
 											<i class="material-icons">stop</i>
-											<p class="hidden-lg hidden-md">Parar simulação.</p>
+											<p class="hidden-lg hidden-md">Cancelar Simulação.</p>
 										</a>
 									</li>
 									<li class="dropdown">
 										<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 											<i class="material-icons">notifications</i>
 											<span class="notification" id="numberLogs"></span>
-											<p class="hidden-lg hidden-md">Processos rodando</p>
+											<p class="hidden-lg hidden-md">Últimos eventos adicionados</p>
 										</a>
 										<ul class="dropdown-menu" id="instructionLog"></ul>
 									</li>
@@ -62,11 +55,11 @@
 
 							<form id="newRequestForm" class="navbar-form navbar-right" role="search">
 								<div class="form-group  is-empty">
-									<input id="newRequestField" type="text" class="form-control" placeholder="Adicionar requisição.">
+									<input id="rhoField" type="text" class="form-control" placeholder="Utilização">
 									<span class="material-input"></span>
 								</div>
 								<button type="submit" class="btn btn-white btn-round btn-just-icon">
-									<i class="material-icons">add</i><div class="ripple-container"></div>
+									<i class="material-icons">play_arrow</i><div class="ripple-container"></div>
 								</button>
 							</form>
 						</div>
@@ -74,30 +67,46 @@
 				</nav>
 				<!-- List of general details about all memories-->
 				<div class="row">
-					<div class="col-lg-3 col-md-6 col-sm-6">
+					<div class="col-lg-4 col-md-4 col-sm-6">
 						<div class="card card-stats">
 							<div class="card-header" data-background-color="blue">
 								<i class="material-icons">trending_flat</i>
 							</div>
 							<div class="card-content">
-								<p class="category">Fila de Requisições</p>
-								<h3 id="pageFaults" class="title"> <small>Page Faults.</small></h3>
+								<p class="category">Fila 1 FCFS Preemptiva</p>
+								<h3 id="pageFaults" class="title"> <small>Estatísticas</small></h3>
 							</div>
 							<div class="card-footer">
 								<div class="stats">
-									<i class="material-icons" >update</i> <div id="lastPageRequested"></div>
+									<i class="material-icons" >update</i> <div id="lastEventAdded"></div>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-3 col-md-6 col-sm-6">
+					<div class="col-lg-4 col-md-4 col-sm-6">
+						<div class="card card-stats">
+							<div class="card-header" data-background-color="red">
+								<i class="material-icons">trending_flat</i>
+							</div>
+							<div class="card-content">
+								<p class="category">Fila 2 FCFS</p>
+								<h3 id="processesTableSize" class="title"><small>Estatísticas</small></h3>
+							</div>
+							<div class="card-footer">
+								<div class="stats">
+									<i class="material-icons">info</i> Último evento adicionado.
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-6">
 						<div class="card card-stats">
 							<div class="card-header" data-background-color="green">
 								<i class="material-icons">memory</i>
 							</div>
 							<div class="card-content">
-								<p class="category">Memória Primária</p>
-								<h3 id="primaryMemorySize" class="title">16/32 <small>Bytes alocados.</small></h3>
+								<p class="category">Servidor</p>
+								<h3 id="primaryMemorySize" class="title"><small>Estatísticas</small></h3>
 							</div>
 							<div class="card-footer">
 								<div class="stats">
@@ -106,112 +115,33 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-3 col-md-6 col-sm-6">
-						<div class="card card-stats">
-							<div class="card-header" data-background-color="orange">
-								<i class="material-icons">storage</i>
-							</div>
-							<div class="card-content">
-								<p class="category">Área de Swap</p>
-								<h3 id="virtualMemorySize" class="title">162/2048 <small>Bytes alocados.</small></h3>
-							</div>
-							<div class="card-footer">
-								<div class="stats">
-									<i class="material-icons">info</i> <div id="lastPageVirtualMemory"></div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-3 col-md-6 col-sm-6">
-						<div class="card card-stats">
-							<div class="card-header" data-background-color="red">
-								<i class="material-icons">library_books</i>
-							</div>
-							<div class="card-content">
-								<p class="category">Tabela de Páginas de Processos</p>
-								<h3 id="processesTableSize" class="title"></h3>
-							</div>
-							<div class="card-footer">
-								<div class="stats">
-									<i class="material-icons">info</i> O número de páginas de um processo é fixo.
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<!-- Memory tables -->
-				<div class="row">
-					<div class="col-lg-3 col-md-6 col-sm-6">
-						<div class="card">
-							<div class="card-header" data-background-color="blue">
-								<h4 class="title">Fila de Requisições</h4>
-								<p class="category">Esta é a lista de todas requisições de Páginas feitas pela CPU e sendo atendidas usando FIFO.</p>
-							</div>
-							<div class="card-content table-responsive">
-								<table class="table table-hover">
-									<thead class="text-info">
-										<th>Processo</th>
-										<th>Página</th>
-									</thead>
-									<tbody id="instructionList"></tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-					<div class="col-lg-6 col-md-6 col-sm-6">
-						<div class="card">
-							<div class="card-header card-chart" data-background-color="green">
-								<div class="ct-chart" id="pageFaultRateChart"></div>
-							</div>
-							<div class="card-content">
-								<h4 class="title">Taxa de Page Faults x Unidade de Tempo</h4>
-							</div>
-						</div>
-						<div class="col-lg-6 col-md-6 col-sm-6">
-						<div class="card">
-							<div class="card-header" data-background-color="green">
-								<h4 class="title">Dados Memória Primária</h4>
-								<p class="category">Esta tabela mostra todas as páginas armazenadas na memória primária usando a técnica de substituição Clock.</p>
-							</div>
-							<div class="card-content table-responsive">
-								<table class="table table-hover">
-									<thead class="text-success">
-										<th>Frame</th>
-										<th>Processo</th>
-										<th>Página</th>
-										<th>Referenciada?</th>
-									</thead>
-									<tbody id="primaryMemoryList"></tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-						<div class="col-lg-6 col-md-6 col-sm-6">
+					<div class="col-lg-4 col-md-12 col-sm-6">
 						<div class="card">
 							<div class="card-header" data-background-color="orange">
-								<h4 class="title">Dados SWAP</h4>
-								<p class="category">Esta tabela mostra todas as páginas armazenadas na área de swap pelo uso da técnica de paging.</p>
+								<h4 class="title">Lista de Eventos</h4>
+								<p class="category"></p>
 							</div>
 							<div class="card-content table-responsive">
 								<table class="table table-hover">
 									<thead class="text-warning">
-										<th>Frame</th>
-										<th>Processo</th>
-										<th>Página</th>
+										<th>Tempo</th>
+										<th>Tipo</th>
+										<th>Freguês</th>
+										<th>Prioridade</th>
 									</thead>
-									<tbody id="virtualMemoryList"></tbody>
+									<tbody id="eventsList"></tbody>
 								</table>
 							</div>
 						</div>
 					</div>
-					</div>
-					<div class="col-lg-3 col-md-6 col-sm-6">
+					<div class="col-lg-8 col-md-12 col-sm-12">
 						<div class="card">
-							<div class="card-header" data-background-color="red">
-								<h4 class="title">Tabela de Páginas dos Processos</h4>
-								<p class="category">Esta tabela mostra todas as páginas de todos processos encontrados na memória.</p>
+							<div class="card-header card-chart" data-background-color="green">
+								<div class="ct-chart" id="rhoChart"></div>
 							</div>
-							<div id="processesPageTable" class="card-content table-responsive"></div>
+							<div class="card-content">
+								<h4 class="title">Utilização do Servidor x Número de Fregueses</h4>
+							</div>
 						</div>
 					</div>
 				</div>
