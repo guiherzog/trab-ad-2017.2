@@ -17,7 +17,7 @@ function createWindow () {
     width: 1280,
     height: 768,
     // frame: false,
-    titleBarStyle: 'hidden'
+    // titleBarStyle: 'hidden'
   })
 
   // Remove menu;
