@@ -1,4 +1,4 @@
-- simulador básico (com 2 filas, interrupção, etc)
+OK - simulador básico (com 2 filas, interrupção, etc)
+OK - seed (explicar como é feito, porque escolher algum específico, talvez implementar uma em js pra poder reproduzir a mesma sequência de eventos aleatórios)
 - fase transiente (desconsiderar os X primeiros caras)
-- seed (explicar como é feito, porque escolher algum específico, talvez implementar uma em js pra poder reproduzir a mesma sequência de eventos aleatórios)
 - intervalo de confiança

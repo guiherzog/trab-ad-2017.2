@@ -14,13 +14,17 @@ class QueueSystem {
 	*/
 	runSimulation(nCustomers, nRounds, rho){
 		let lambda = rho/2;
-		let mi = 1/2;
+		let mi = 1;
 		let results = [];
 
+		let startTime = new Date().getTime();
 		for(let i = 0; i < nRounds; i++) {
 			let roundResult = this.runRound(nCustomers, lambda, mi);
 			results.push(roundResult);
 		}
+		let endTime = new Date().getTime();
+
+		console.log(`Tempo total: ${(endTime -  startTime)/1000}`);
 	}
 
 	/*
@@ -39,14 +43,6 @@ class QueueSystem {
 
 	/* 
 		Executa uma rodada da simulação com n fregueses.
-
-		Teste com fila D/D/1:
-			arrivalTime += 1;
-			service1Time = 1;
-			service2Time = 2;
-
-		Fregues 1 começa a execução do serviço 2 no mesmo instante que o fregues 2 chega e é interrompido com zero segundos.
-
 	*/
 	runRound(nCustomers, lambda, mi) {
 
@@ -70,19 +66,19 @@ class QueueSystem {
 			X1[i] = service1Time;
 			X2[i] = service2Time;
 
-			console.log(`
-Fregues ${i}:
-	Tempo Chegada = ${arrivalTime},
-	Serviço 1 = ${service1Time},
-	Serviço 2 = ${service2Time}
-			`);
+// 			console.log(`
+// Fregues ${i}:
+// 	Tempo Chegada = ${arrivalTime},
+// 	Serviço 1 = ${service1Time},
+// 	Serviço 2 = ${service2Time}
+// 			`);
 
 			// Evento de chegada no sistema
 			let arrival = new Event(arrivalTime, i, EventType.SYSTEM_ARRIVAL, 1);
 			let arrivalEventPos = this.addEvent(events, arrival);
 
 
-			// inicio do servico 1 do freguês autal =
+			// Inicio do servico 1 do freguês autal =
 			// max(arrivalTime atual, último fim de serviço 1 da lista de eventos)
 			let lastService1End = 0;
 			let lastService1EndPos = -1;
@@ -101,18 +97,18 @@ Fregues ${i}:
 
 			let start1EventPos;
 
-			// tem servico 1 em andamento, vou adicionar logo depois de um fim de servico 1
+			// Tem servico 1 em andamento, vou adicionar logo depois de um fim de servico 1
 			if(lastService1End > arrivalTime && lastService1EndPos > 0) {
 				events.splice(lastService1EndPos+1, 0, start1);
 				start1EventPos = lastService1EndPos+1;
 			}
 
-			// não tem servico 1 em andamento, vou adicionar no arrival time do freguês atual
+			// Não tem servico 1 em andamento, vou adicionar no arrival time do freguês atual
 			else {
 				start1EventPos = this.addEvent(events, start1);
 			}
 
-			// como a fila 1 tem prioridade, devemos agora atualizar todos os eventos
+			// Como a fila 1 tem prioridade, devemos agora atualizar todos os eventos
 			// da fila 2 (início e fim de serviço 2) que vem depois, somando um offset
 			// ao tempo deles (esse offset será o tempo do serviço 1 do freguês atual)
 			for(let j = start1EventPos+1; j < events.length; j++) {
@@ -123,9 +119,9 @@ Fregues ${i}:
 				W2[event.customerId] += service1Time;
 			}
 
-			// fim do servico 1 do freguês autal = inicio + o tempo de serviço 1
+			// Fim do servico 1 do freguês atual = inicio + o tempo de serviço 1
 			let end1 = new Event(service1Start + service1Time, i, EventType.SERVICE_END, 1);
-			// se tinha serviço 1 em andamento
+			// Se tinha serviço 1 em andamento
 			if(lastService1End > arrivalTime && lastService1EndPos > 0) {
 				events.splice(lastService1EndPos+2, 0, end1);
 			}
@@ -134,63 +130,66 @@ Fregues ${i}:
 
 			/* 
 				Checar se service1Start caiu no meio de um serviço 2 em execucao
-				(está entre um inicio servico 2 e fim servico 2)
-				o evento logo antes da chegada é início de serviço 2 
+				(está entre um inicio servico 2 e fim servico 2), vai ter interrupção
+
+				(e o evento logo antes da chegada é início ou continuação de serviço 2)
 			*/
 			if(arrivalEventPos > 0 &&
 			   (events[arrivalEventPos-1].type == EventType.SERVICE_START ||
 			   events[arrivalEventPos-1].type == EventType.SERVICE_RESUME) &&
 			   events[arrivalEventPos-1].priority == 2) {
-				// criar interrupcao e continuacao do serviço 2 no qual eu caí no meio
+				// Criar interrupcao e continuacao do serviço 2 no qual eu caí no meio
 
 				let customerId = events[arrivalEventPos-1].customerId;
 				
 				let interruption = new Event(arrivalTime, customerId, EventType.SERVICE_INTERRUPTION, 2);
-				//this.addEvent(events, interruption);
-				// adicionando evento da interrupção antes do evento de início do serviço 1 do cara que interrompeu
+
+				// Adicionando evento da interrupção antes do evento de início do serviço 1 do cara que interrompeu
 				events.splice(start1EventPos, 0, interruption);
 
 				let resume = new Event(arrivalTime + service1Time, customerId, EventType.SERVICE_RESUME, 2);
 				this.addEvent(events, resume);
 			}
 
-			// colocar inicio e fim do serviço 2 do freguês atual no fim da lista de eventos
+			// Colocar inicio e fim do serviço 2 do freguês atual no fim da lista de eventos
 			let lastEventTime = events[events.length-1].time;
-			let sevice2Start = lastEventTime;
+			let service2Start = lastEventTime;
 
-			let start2 = new Event(sevice2Start, i, EventType.SERVICE_START, 2);
+			let start2 = new Event(service2Start, i, EventType.SERVICE_START, 2);
 			this.addEvent(events, start2);
-			let end2 = new Event(sevice2Start + service2Time, i, EventType.SERVICE_END, 2);
+			let end2 = new Event(service2Start + service2Time, i, EventType.SERVICE_END, 2);
 			this.addEvent(events, end2);
 
-			let service1End = service1Start + service1Time;
 
-			// tempo inical na fila 2: "inicio servico 2" - "chegou na fila 2"
+			// Tempo inical na fila 2: "inicio servico 2" - "chegou na fila 2"
 			// ("chegou na fila 2" = "fim servico 1")
-			W2[i] = sevice2Start - service1End;
+			let service1End = service1Start + service1Time;
+			W2[i] = service2Start - service1End;
 
 
-			// Nq1 = Quantos chegaram antes dele -  quantos iniciaram serviço 1 antes dele.
 			Nq1[i] = 0;
+			Ns2[i] = 0;
+			Nq2[i] = 0;
+			Ns1[i] = 0;
+
 			for (let j = 0; j < arrivalEventPos; j++) {
-				// console.log(`i=${i} j=${j} Nq1=${Nq1[i]}`);
 				let ev = events[j];
+
+				/* 
+					Nq1 = Quantos chegaram antes dele -  quantos iniciaram serviço 1 antes dele.
+				*/
 				if (ev.type == EventType.SYSTEM_ARRIVAL)
 					Nq1[i]++;
 				else if (ev.type == EventType.SERVICE_START &&
 						 ev.priority == 1)
 					Nq1[i]--;
-			}
 
-			Nq2[i] = 0;
-			/* 
-				Nq2 = 
-					Quantos chegaram na fila 2 (terminaram serviço 1 ou foram interrompidos)
-					subtraídos de
-					Quantos começaram o serviço 2 (inicio serviço 2 ou continuação serviço 2)
-			*/
-			for (let j = 0; j < arrivalEventPos; j++) {
-				let ev = events[j];
+				/* 
+					Nq2 = 
+						Quantos chegaram na fila 2 (terminaram serviço 1 ou foram interrompidos)
+						subtraídos de
+						Quantos começaram o serviço 2 (inicio serviço 2 ou continuação serviço 2)
+				*/
 				// Chegou na fila 2 (= terminou serviço 1).
 				if (ev.type === EventType.SERVICE_END && ev.priority === 1)
 					Nq2[i]++;
@@ -203,28 +202,18 @@ Fregues ${i}:
 				// Recomeçou serviço 2 após interrupção.
 				else if (ev.type === EventType.SERVICE_RESUME && ev.priority === 2)
 					Nq2[i]--;
-			}
 
-			Ns1[i] = 0;
-			/*
-				 Ns1 = Quantos iniciaram o serviço 1 antes dele - Quantos terminaram o serviço 1 antes dele.
-			*/
-			for (let j = 0; j < arrivalEventPos; j++) {
-				// console.log(`i=${i} j=${j} Nq1=${Nq1[i]}`);
-				let ev = events[j];
+				/*
+					 Ns1 = Quantos iniciaram o serviço 1 antes dele - Quantos terminaram o serviço 1 antes dele.
+				*/
 				if (ev.type == EventType.SERVICE_START && ev.priority == 1)
 					Ns1[i]++;
 				else if (ev.type == EventType.SERVICE_END && ev.priority == 1)
 					Ns1[i]--;
-			}
 
-			Ns2[i] = 0;
-			/*
-				 Ns1 = Quantos iniciaram o serviço 1 antes dele - Quantos terminaram o serviço 1 antes dele.
-			*/
-			for (let j = 0; j < arrivalEventPos; j++) {
-				// console.log(`i=${i} j=${j} Nq1=${Nq1[i]}`);
-				let ev = events[j];
+				/*
+					 Ns2 = Quantos iniciaram o serviço 2 antes dele - Quantos terminaram o serviço 2 antes dele.
+				*/
 				// Começou serviço 2 do inicio.
 				if (ev.type === EventType.SERVICE_START && ev.priority === 2)
 					Ns2[i]++;
@@ -239,28 +228,32 @@ Fregues ${i}:
 					Ns2[i]--;
 			}
 
+			if ((i & 0x1FF) == 0){
+				console.log(i);
+			}
+
 		}
-		console.table(events);
+		// console.table(events);
 
-		console.log('Nq1 (número de pessoas esperando na fila 1):');
-		console.log(Nq1);
-		console.log('Nq2 (número de pessoas esperando na fila 2):');
-		console.log(Nq2);
+		// console.log('Nq1 (número de pessoas esperando na fila 1):');
+		// console.log(Nq1);
+		// console.log('Nq2 (número de pessoas esperando na fila 2):');
+		// console.log(Nq2);
 
-		console.log('Ns1 (número de pessoas em serviço 1):');
-		console.log(Ns1);
-		console.log('Ns2 (número de pessoas em serviço 2):');
-		console.log(Ns2);
+		// console.log('Ns1 (número de pessoas em serviço 1):');
+		// console.log(Ns1);
+		// console.log('Ns2 (número de pessoas em serviço 2):');
+		// console.log(Ns2);
 
-		console.log('W1 (tempo de espera na fila 1)');
-		console.log(W1);
-		console.log('W2 (tempo de espera na fila 2)');
-		console.log(W2);
+		// console.log('W1 (tempo de espera na fila 1)');
+		// console.log(W1);
+		// console.log('W2 (tempo de espera na fila 2)');
+		// console.log(W2);
 
-		console.log('X1 (tempo em execução do serviço 1)');
-		console.log(X1);
-		console.log('X2 (tempo em execução do serviço 2)');
-		console.log(X2);
+		// console.log('X1 (tempo em execução do serviço 1)');
+		// console.log(X1);
+		// console.log('X2 (tempo em execução do serviço 2)');
+		// console.log(X2);
 
 		/*
 		Length de um array em js não é o número de elementos, mas sim "maior índice + 1".
@@ -281,8 +274,8 @@ Fregues ${i}:
 
 		let W1Avg = W1.reduce((a,b) => (a+b)) / (W1.length-customerIndexStartsFrom);
 		let W2Avg = W2.reduce((a,b) => (a+b)) / (W2.length-customerIndexStartsFrom);
-		let X1Avg = X1.reduce((a,b) => (a+b)) / (Nq1.length-customerIndexStartsFrom);
-		let X2Avg = X1.reduce((a,b) => (a+b)) / (Nq1.length-customerIndexStartsFrom);
+		let X1Avg = X1.reduce((a,b) => (a+b)) / (X1.length-customerIndexStartsFrom);
+		let X2Avg = X2.reduce((a,b) => (a+b)) / (X2.length-customerIndexStartsFrom);
 		let T1Avg = W1Avg + X1Avg;
 		let T2Avg = W2Avg + X2Avg;
 

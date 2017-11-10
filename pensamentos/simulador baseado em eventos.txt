@@ -2,7 +2,7 @@
 Lista de eventos vs lista de customers
 
 Evento:
-	- hora
+	- horario
 	- numero do freguês
 	- tipo
 		- chegou no sistema (= chegada fila 1)
@@ -10,18 +10,20 @@ Evento:
 		- fim servico 1 (= chegada fila 2)
 		- inicio servico 2
 		- fim servico 2 (= saiu do sistema)
+		- interrupção serviço 2
+		- resumo serviço 2
 
 Sempre que alguém chega, ver o que é preciso fazer nos eventos com hora maior do que o tempo dessa chegada (os com hora menor não importa, já passaram)
 
 
 Exemplo:
 	- criação do freguês 1 (tempo pra chegada = 10,  X1 = 20,  X2 = 15)
-		hora, num, 	tipo
-		10,   f1,   chegou no sistema
-		10,   f1,   inicio do serviço 1
-		30,	  f1,   fim servico 1
-		30,   f1,   inicio servico 2
-		45,   f1,   fim servico 2
+		hora, num, 	tipos					prioridade
+		10,   f1,   chegou no sistema		1
+		10,   f1,   inicio do serviço 1		1
+		30,	  f1,   fim servico 1			1
+		30,   f1,   inicio servico 2		2
+		45,   f1,   fim servico 2			2
 
 	- criacao do fregues 2 (tempo pra chegada = 12,  X1 = 18,  X2 = 16)
 		hora, num, 	tipo
