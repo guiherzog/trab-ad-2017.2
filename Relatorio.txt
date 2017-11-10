@@ -8,5 +8,12 @@ Testes úteis:
 		123456: fregues i+1 chega durante serviço 1 do fregues i (sem interrupções).
 		'test': fregues 1 é interrompido 2x.
 
+	Teste com fila D/D/1:
+		arrivalTime += 1;
+		service1Time = 1;
+		service2Time = 2;
+
+	Fregues 1 começa a execução do serviço 2 no mesmo instante que o fregues 2 chega e é interrompido com zero segundos.
+	
 	QueueSystem1.runSimulation(3, 1, 0.9);
 		Dois fregueses chegam num intervalo muito próximo.
