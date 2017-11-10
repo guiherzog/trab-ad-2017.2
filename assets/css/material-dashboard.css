@@ -2359,7 +2359,7 @@ select.form-control[multiple], .form-group.is-focused select.form-control[multip
 .table > thead > tr > td,
 .table > tbody > tr > td,
 .table > tfoot > tr > td {
-  padding: 12px 8px;
+  padding: 3px 3px;
   vertical-align: middle;
 }
 .table > thead > tr > th {
@@ -3570,7 +3570,7 @@ footer .btn {
   color: #999999;
 }
 .card .card-content {
-  padding: 15px 20px;
+  padding: 15px 10px;
 }
 .card .card-content .category {
   margin-bottom: 0;

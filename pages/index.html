@@ -53,7 +53,7 @@
 								</ul>
 							</div>
 
-							<form id="newRequestForm" class="navbar-form navbar-right" role="search">
+							<form id="runForm" class="navbar-form navbar-right" role="search">
 								<div class="form-group  is-empty">
 									<input id="rhoField" type="text" class="form-control" placeholder="Utilização">
 									<span class="material-input"></span>
@@ -67,7 +67,23 @@
 				</nav>
 				<!-- List of general details about all memories-->
 				<div class="row">
-					<div class="col-lg-4 col-md-4 col-sm-6">
+					<div class="col-lg-3 col-md-3 col-sm-6">
+						<div class="card card-stats">
+							<div class="card-header" data-background-color="blue">
+								<i class="material-icons">library_books</i>
+							</div>
+							<div class="card-content">
+								<p class="category">Simulação Geral</p>
+								<h3 id="customersStats" class="title"><small>10/100 Fregueses</small></h3>
+							</div>
+							<div class="card-footer">
+								<div class="stats">
+									<i class="material-icons" >update</i> <div id="lastEventAdded"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-3 col-sm-6">
 						<div class="card card-stats">
 							<div class="card-header" data-background-color="blue">
 								<i class="material-icons">trending_flat</i>
@@ -83,7 +99,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-4 col-md-4 col-sm-6">
+					<div class="col-lg-3 col-md-3 col-sm-6">
 						<div class="card card-stats">
 							<div class="card-header" data-background-color="red">
 								<i class="material-icons">trending_flat</i>
@@ -99,7 +115,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-4 col-md-4 col-sm-6">
+					<div class="col-lg-3 col-md-3 col-sm-6">
 						<div class="card card-stats">
 							<div class="card-header" data-background-color="green">
 								<i class="material-icons">memory</i>
@@ -115,7 +131,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-4 col-md-12 col-sm-6">
+					<div class="col-lg-5 col-md-12 col-sm-6">
 						<div class="card">
 							<div class="card-header" data-background-color="orange">
 								<h4 class="title">Lista de Eventos</h4>
@@ -124,6 +140,7 @@
 							<div class="card-content table-responsive">
 								<table class="table table-hover">
 									<thead class="text-warning">
+										<th>#</th>
 										<th>Tempo</th>
 										<th>Tipo</th>
 										<th>Freguês</th>
@@ -134,7 +151,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-8 col-md-12 col-sm-12">
+					<div class="col-lg-7 col-md-12 col-sm-12">
 						<div class="card">
 							<div class="card-header card-chart" data-background-color="green">
 								<div class="ct-chart" id="rhoChart"></div>

@@ -62,7 +62,9 @@ class QueueSystem {
 		for(let i = customerIndexStartsFrom; i <= nCustomers; i++) {
 			arrivalTime += Utils.getRandomExp(lambda);
 			let service1Time = Utils.getRandomExp(mi);
-			let service2Time = Utils.getRandomExp(mi); 
+			let service2Time = Utils.getRandomExp(mi);
+
+			// Adiciona o tempo de serviço 1 e 2 deste freguês.
 			X1[i] = service1Time;
 			X2[i] = service2Time;
 
@@ -76,7 +78,6 @@ class QueueSystem {
 			// Evento de chegada no sistema
 			let arrival = new Event(arrivalTime, i, EventType.SYSTEM_ARRIVAL, 1);
 			let arrivalEventPos = this.addEvent(events, arrival);
-
 
 			// Inicio do servico 1 do freguês autal =
 			// max(arrivalTime atual, último fim de serviço 1 da lista de eventos)
@@ -92,7 +93,7 @@ class QueueSystem {
 			let service1Start = Math.max(arrivalTime, lastService1End);
 			let start1 = new Event(service1Start, i, EventType.SERVICE_START, 1);
 
-			// espera na fila 1 = "inicio servico 1" - "chegou no sistema"
+			// Espera na fila 1 = "inicio servico 1" - "chegou no sistema"
 			W1[i] = service1Start - arrivalTime;
 
 			let start1EventPos;
@@ -160,12 +161,10 @@ class QueueSystem {
 			let end2 = new Event(service2Start + service2Time, i, EventType.SERVICE_END, 2);
 			this.addEvent(events, end2);
 
-
 			// Tempo inical na fila 2: "inicio servico 2" - "chegou na fila 2"
 			// ("chegou na fila 2" = "fim servico 1")
 			let service1End = service1Start + service1Time;
 			W2[i] = service2Start - service1End;
-
 
 			Nq1[i] = 0;
 			Ns2[i] = 0;
@@ -174,7 +173,6 @@ class QueueSystem {
 
 			for (let j = 0; j < arrivalEventPos; j++) {
 				let ev = events[j];
-
 				/* 
 					Nq1 = Quantos chegaram antes dele -  quantos iniciaram serviço 1 antes dele.
 				*/
@@ -298,6 +296,26 @@ Valores médios:
 	X2 médio = ${X2Avg}
 	T2 médio = ${T2Avg}
 	`);
+		this.renderEvents(events);
+	}
+
+	renderEvents(events){
+		document.getElementById("eventsList").innerHTML = "";
+		let tRows = ``;
+		for (let i = 1; i <= events.length; i++) {
+			if (!events[i])
+				break;
+			tRows +=`
+				<tr>
+					<td>${i}</td>
+					<td>${events[i].time.toFixed(3)} </td>
+					<td>${events[i].type}</td>
+					<td>${events[i].customerId}</td>
+					<td>${events[i].priority}</td>
+				</tr>
+			`;
+			document.getElementById("eventsList").innerHTML = tRows;
+		}
 	}
 }
 
