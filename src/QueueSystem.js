@@ -127,7 +127,6 @@ class QueueSystem {
 			*/
 			if (nextCustomerId % 100 === 0) {
 				rhoQueue1PerTime.push(Ns1Avg/nextCustomerId);
-				arrivals.push(time);
 				this.renderRhoChart(nextCustomerId/100, rhoQueue1PerTime);
 			}
 		}
