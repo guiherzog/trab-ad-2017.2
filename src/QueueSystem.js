@@ -63,6 +63,8 @@ class QueueSystem {
 		let nextCustomerId = 0;
 		let nServiceEnd2 = 0;
 		let executingCustomer = null;
+		// Lista com rho a cada algumas iterações.
+		let rhoQueue1PerTime = [];
 
 		while (nServiceEnd2 < nCustomers) {
 			let time = Utils.getRandomExp(lambda);
@@ -118,6 +120,16 @@ class QueueSystem {
 				}
 				nextCustomerId++;
 			}
+
+			/* 
+				A cada 100 iterações, adiciona o rho atual na lista e renderiza o chart.
+				Não tá otimizado ainda.
+			*/
+			if (nextCustomerId % 100 === 0) {
+				rhoQueue1PerTime.push(Ns1Avg/nextCustomerId);
+				arrivals.push(time);
+				this.renderRhoChart(nextCustomerId/100, rhoQueue1PerTime);
+			}
 		}
 
 		Nq1Avg /= nCustomers;
@@ -152,7 +164,9 @@ class QueueSystem {
 				X2 médio = ${X2Avg}
 				T2 médio = ${T2Avg}
 		`);
-		this.renderEvents(events);
+
+		// Não dá pra renderizar a lista de eventos para mais de 100 fregueses.
+		// this.renderEvents(events);
 	}
 
 	renderEvents(events){
@@ -172,6 +186,34 @@ class QueueSystem {
 			`;
 			document.getElementById("eventsList").innerHTML = tRows;
 		}
+	}
+
+	// Método que renderiza o gráfico do rho em função do mundo de fregueses.
+	renderRhoChart(nCustomers, rhoQueue1PerTime){
+		let labelArray = [nCustomers];
+		for (var i = 1; i <= nCustomers; i++) {
+			labelArray[i-1] = i*100;
+		};
+
+		const dataRhoChart = {
+				labels: labelArray,
+				series: [rhoQueue1PerTime]
+		};
+
+		const optionsRhoChart = {
+			axisX: {
+				labelInterpolationFnc: function skipLabels(value, index) {
+					return index % 10  === 0 ? value : null;
+				}
+			},
+			lineSmooth: Chartist.Interpolation.cardinal({
+				tension: 0
+			}),
+			height: 160,
+			chartPadding: { top: 30, right: 5, bottom: 0, left: 0},
+		}
+
+		let rhoChart = new Chartist.Line('#rhoChart', dataRhoChart, optionsRhoChart);
 	}
 }
 
