@@ -9,7 +9,7 @@ function addFormListener(){
 		e.preventDefault();
 		let rho = $("#rhoField").val();
 		if (rho > 0){
-			QueueSystem1.runSimulation(10, 1, rho); // nCustomers, nRounds, rho
+			QueueSystem1.runSimulation(10000, 1, rho); // nCustomers, nRounds, rho
 		} else {
 			renderNotification('top', 'center');
 		}
