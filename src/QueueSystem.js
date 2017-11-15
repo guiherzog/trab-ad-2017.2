@@ -80,7 +80,6 @@ class QueueSystem {
 						executingCustomer.priority = 2;
 						executingCustomer.arrival2 = currentTime - time;
 						executingCustomer.remainingTime = executingCustomer.X2;
-						Nq2Avg += queue2.length;
 						queue2.push(executingCustomer);
 						events.push(new Event(currentTime - time, executingCustomer.id + customerIndexStartsFrom, EventType.SYSTEM_ARRIVAL, 2));
 					}
@@ -110,13 +109,20 @@ class QueueSystem {
 				X2Avg += service2Time;
 				let customer = new Customer(nextCustomerId, currentTime, service1Time, service2Time);
 				Nq1Avg += queue1.length;
+				Nq2Avg += queue2.length;
 				queue1.push(customer);
 				events.push(new Event(currentTime, customer.id + customerIndexStartsFrom, EventType.SYSTEM_ARRIVAL, 1));
-				if (executingCustomer == null || executingCustomer.priority == 2)
-					executingCustomer= customer;
-				else {
-					Nq1Avg--;
-					Ns1Avg++;
+				if (executingCustomer == null){
+					executingCustomer = customer;
+				} else {
+					if (executingCustomer.priority == 1){
+						Nq1Avg--;
+						Ns1Avg++;
+					} else {
+						executingCustomer = customer;
+						Nq2Avg--;
+						Ns2Avg++;
+					}
 				}
 				nextCustomerId++;
 			}
