@@ -9,19 +9,15 @@ const { EventType } = require('./EventType');
 */
 class QueueSystem {
 	/* 
-		Roda uma simulação com n fregueses, n vezes.
+		Roda uma simulação com n fregueses, m vezes.
 		Calculando o lambda e mi de modo a manter o rho definido no parametro.
 	*/
 	runSimulation(nCustomers, nRounds, rho){
 		let lambda = rho/2;
 		let mi = 1;
-		let results = [];
 
 		let startTime = new Date().getTime();
-		for(let i = 0; i < nRounds; i++) {
-			let roundResult = this.runRound(nCustomers, lambda, mi);
-			results.push(roundResult);
-		}
+		this.runRounds(nCustomers, nRounds, lambda, mi);
 		let endTime = new Date().getTime();
 
 		console.log(`Tempo total: ${(endTime -  startTime)/1000}`);
@@ -44,22 +40,20 @@ class QueueSystem {
 	/* 
 		Executa uma rodada da simulação com n fregueses.
 	*/
-	runRound(nCustomers, lambda, mi) {
-
-
+	runRounds(nCustomers, nRounds, lambda, mi) {
 		// Inicialização de estruturas de dados para representar as filas e eventos
 		let events = [];
 		let queue1 = [];
 		let queue2 = [];
 		// Inicialização de variáveis p/ calcular esperanças
-		let Ns1Avg = 0;
-		let Ns2Avg = 0;
-		let Nq1Avg = 0;
-		let Nq2Avg = 0;
-		let W1Avg = 0;
-		let W2Avg = 0;
-		let X1Avg = 0;
-		let X2Avg = 0;
+		let Ns1Avg = new Array(nRounds).fill(0);
+		let Nq1Avg = new Array(nRounds).fill(0);
+		let Ns2Avg = new Array(nRounds).fill(0);
+		let Nq2Avg = new Array(nRounds).fill(0);
+		let W1Avg = new Array(nRounds).fill(0);
+		let W2Avg = new Array(nRounds).fill(0);
+		let X1Avg = new Array(nRounds).fill(0);
+		let X2Avg = new Array(nRounds).fill(0);
 		let currentTime = 0; // Variável que representa o tempo atual da simulação.
 
 		let customerIndexStartsFrom = 1; // Variável para representar os indíces a partir de 1. Objetivo estético.
@@ -69,7 +63,7 @@ class QueueSystem {
 		let rhoQueue1PerTime = []; // Lista com rho a cada algumas iterações.
 
 		// Loop da simulação é executado até nCustomers terem saído do sistema
-		while (nServiceEnd2 < nCustomers) {
+		while (nServiceEnd2 < nCustomers * nRounds) {
 			// Gerando tempo percorrido até a próxima chegada no sistema
 			let time = Utils.getRandomExp(lambda);
 			// Após gerar este tempo, o mesmo é adicionado ao tempo total da simulação
@@ -82,6 +76,8 @@ class QueueSystem {
 			while (time > 0 && executingCustomer != null){
 				// Verifica se o freguês que está atualmente no servidor conseguirá terminar de executar com o tempo restante antes da próxima chegada
 				if (executingCustomer.remainingTime <= time){
+					// Verificando qual é o round do consumidr que está atualmente executando para armazenar suas esperanças corretamente.
+					let executingCustomerRound = Math.floor(executingCustomer.id / nCustomers);
 					// Neste caso, é necessário diminuir o tempo restante antes da próxima chegada em uma quantidade igual ao tempo de execução restante do freguês
 					time -= executingCustomer.remainingTime;
 					executingCustomer.remainingTime = 0;
@@ -99,7 +95,7 @@ class QueueSystem {
 							Para isso, utilizamos (currentTime - time), que representa o momento de fim de serviço,
 							que é diminuído do momento de chegada do freguês na fila 1 (que é o momento de chegada no sistema).
 						*/
-						W1Avg += ((currentTime - time) - executingCustomer.arrival1) - executingCustomer.X1;
+						W1Avg[executingCustomerRound] += ((currentTime - time) - executingCustomer.arrival1) - executingCustomer.X1;
 						queue1.shift(); // Shift() é uma função de array que remove seu primeiro elemento, e atualiza os índices de todos os elementos.
 						executingCustomer.priority = 2;
 						executingCustomer.arrival2 = currentTime - time;
@@ -114,7 +110,7 @@ class QueueSystem {
 						e atualizar o número de fregueses que saíram do sistema.
 					*/
 					else {
-						W2Avg += ((currentTime - time) - executingCustomer.arrival2) - executingCustomer.X2;
+						W2Avg[executingCustomerRound] += ((currentTime - time) - executingCustomer.arrival2) - executingCustomer.X2;
 						queue2.shift(); // Shift() é uma função de array que remove seu primeiro elemento, e atualiza os índices de todos os elementos.
 						nServiceEnd2++;
 					}
@@ -143,23 +139,25 @@ class QueueSystem {
 				Nesta simulação, um freguês novo só entra no sistema se o próximo ID a ser criado for menor que o número de consumidores recebidos de entrada.
 				Mesmo no caso onde nenhum freguês possa ser criado por ter chegado ao limite, a simulação continua executando em taxa baseada na chegada.
 			*/
-			if (nextCustomerId < nCustomers){
+			if (nextCustomerId < nCustomers * nRounds){
+				// Verificando qual é o round atual para salvar corretamente as esperanças obtidas na criação de um novo consumidor.
+				let currentRound = Math.floor(nextCustomerId / nCustomers);
 				// Criação dos tempos de execução X1 e X2 para o próximo freguês
 				let service1Time = Utils.getRandomExp(mi);
 				let service2Time = Utils.getRandomExp(mi);
 				// Ambos tempos precisam ser adicionados no cálculo da esperança de X1 e X2
-				X1Avg += service1Time;
-				X2Avg += service2Time;
+				X1Avg[currentRound] += service1Time;
+				X2Avg[currentRound] += service2Time;
 				let customer = new Customer(nextCustomerId, currentTime, service1Time, service2Time);
 				/*
 					No momento que um freguês chega, é necessário verificar o estado de ambas filas para atualizar a Esperança de Nq1 e Nq2.
 					Para este cálculo, usamos o tamanho das filas 1 e 2. Apesar de isso parecer certo num primeiro momento, o código desta simulação
 					não remove um freguês de sua fila no momento em que ele passa a executar. Isso só acontece no instante em que ele termina seu tempo de execução
 					para aquela fila. Por conta disso, é necessário diminuir o valor de Nq1/Nq2 em 1 se alguém daquela fila estiver executando.
-					Este procedimento é um pouco mais abaixo.
+					Este procedimento é executado um pouco mais abaixo.
 				*/
-				Nq1Avg += queue1.length;
-				Nq2Avg += queue2.length;
+				Nq1Avg[currentRound] += queue1.length;
+				Nq2Avg[currentRound] += queue2.length;
 				// Freguês é adicionado na fila 1 (já que é a única fila com chegadas externas), e é criado um evento para sua chegada.
 				queue1.push(customer);
 				events.push(new Event(currentTime, customer.id + customerIndexStartsFrom, EventType.SYSTEM_ARRIVAL, 1));
@@ -169,15 +167,15 @@ class QueueSystem {
 				} else {
 					// Se existe alguém da fila 1 executando, é necessário atualizar as Esperanças de Nq1 e Ns1.
 					if (executingCustomer.priority == 1){
-						Nq1Avg--;
-						Ns1Avg++;
+						Nq1Avg[currentRound]--;
+						Ns1Avg[currentRound]++;
 					} 
 					// Se existe alguém da fila 2 executando, é necessário atualizar as Esperanças de Nq1 e Ns1.
 					// Além disso, por conta de prioridade, o freguês que chegou no sistema toma o lugar do freguês da fila 2 que estava no servidor.
 					else {
 						executingCustomer = customer;
-						Nq2Avg--;
-						Ns2Avg++;
+						Nq2Avg[currentRound]--;
+						Ns2Avg[currentRound]++;
 					}
 				}
 				nextCustomerId++; // Incrementando ID a ser utilizado na criação de fregueses
@@ -200,41 +198,97 @@ class QueueSystem {
 			a Esperança do número de pessoas de cada fila, além da Esperança de tempo total de cada fila.
 		*/
 
-		Nq1Avg /= nCustomers;
-		Ns1Avg /= nCustomers;
-		let N1Avg = Nq1Avg + Ns1Avg;
-		W1Avg /= nCustomers;
-		X1Avg /= nCustomers;
-		let T1Avg = W1Avg + X1Avg;
-		Nq2Avg /= nCustomers;
-		Ns2Avg /= nCustomers;
-		let N2Avg = Nq2Avg + Ns2Avg;
-		W2Avg /= nCustomers;
-		X2Avg /= nCustomers;
-		let T2Avg = W2Avg + X2Avg;
+		// Inicialização das Esperanças de todas as rodadas juntas
+		let Ns1AvgSim = 0;
+		let Nq1AvgSim = 0;
+		let Ns2AvgSim = 0;
+		let Nq2AvgSim = 0;
+		let W1AvgSim = 0;
+		let W2AvgSim = 0;
+		let X1AvgSim = 0;
+		let X2AvgSim = 0;
+
+		// Exibição das Esperanças por rodada
+		for (var i = 0; i < nRounds; i++) {
+			Nq1Avg[i] /= nCustomers;
+			Ns1Avg[i] /= nCustomers;
+			let N1Avg = Nq1Avg[i] + Ns1Avg[i];
+			W1Avg[i] /= nCustomers;
+			X1Avg[i] /= nCustomers;
+			let T1Avg = W1Avg[i] + X1Avg[i];
+			Nq2Avg[i] /= nCustomers;
+			Ns2Avg[i] /= nCustomers;
+			let N2Avg = Nq2Avg[i] + Ns2Avg[i];
+			W2Avg[i] /= nCustomers;
+			X2Avg[i] /= nCustomers;
+			let T2Avg = W2Avg[i] + X2Avg[i];
+
+			console.log(`
+				Valores médios:
+
+					Nq1 médio = ${Nq1Avg[i]}
+					Ns1 médio = ${Ns1Avg[i]}
+					N1  médio = ${N1Avg}
+
+					Nq2 médio = ${Nq2Avg[i]}
+					Ns2 médio = ${Ns2Avg[i]}
+					N2  médio = ${N2Avg}
+
+					W1 médio = ${W1Avg[i]}
+					X1 médio = ${X1Avg[i]}
+					T1 médio = ${T1Avg}
+
+					W2 médio = ${W2Avg[i]}
+					X2 médio = ${X2Avg[i]}
+					T2 médio = ${T2Avg}
+			`);
+
+			Ns1AvgSim += Ns1Avg[i];
+			Nq1AvgSim += Nq1Avg[i];
+			Ns2AvgSim += Ns2Avg[i];
+			Nq2AvgSim += Nq2Avg[i];
+			W1AvgSim += W1Avg[i];
+			W2AvgSim += W2Avg[i];
+			X1AvgSim += X1Avg[i];
+			X2AvgSim += X2Avg[i];
+		}
+
+		// Cálculo e Exibição das Esperanças de todas as rodadas juntas
+		Nq1AvgSim /= nRounds;
+		Ns1AvgSim /= nRounds;
+		let N1AvgSim = Nq1AvgSim + Ns1AvgSim;
+		W1AvgSim /= nRounds;
+		X1AvgSim /= nRounds;
+		let T1AvgSim = W1AvgSim + X1AvgSim;
+		Nq2AvgSim /= nRounds;
+		Ns2AvgSim /= nRounds;
+		let N2AvgSim = Nq2AvgSim + Ns2AvgSim;
+		W2AvgSim /= nRounds;
+		X2AvgSim /= nRounds;
+		let T2AvgSim = W2AvgSim + X2AvgSim;
 
 		console.log(`
-			Valores médios:
+			Valores médios gerais da Simulação:
 
-				Nq1 médio = ${Nq1Avg}
-				Ns1 médio = ${Ns1Avg}
-				N1  médio = ${N1Avg}
+				Nq1 médio = ${Nq1AvgSim}
+				Ns1 médio = ${Ns1AvgSim}
+				N1  médio = ${N1AvgSim}
 
-				Nq2 médio = ${Nq2Avg}
-				Ns2 médio = ${Ns2Avg}
-				N2  médio = ${N2Avg}
+				Nq2 médio = ${Nq2AvgSim}
+				Ns2 médio = ${Ns2AvgSim}
+				N2  médio = ${N2AvgSim}
 
-				W1 médio = ${W1Avg}
-				X1 médio = ${X1Avg}
-				T1 médio = ${T1Avg}
+				W1 médio = ${W1AvgSim}
+				X1 médio = ${X1AvgSim}
+				T1 médio = ${T1AvgSim}
 
-				W2 médio = ${W2Avg}
-				X2 médio = ${X2Avg}
-				T2 médio = ${T2Avg}
+				W2 médio = ${W2AvgSim}
+				X2 médio = ${X2AvgSim}
+				T2 médio = ${T2AvgSim}
 		`);
 
 		// Não dá pra renderizar a lista de eventos para mais de 100 fregueses.
-		if (nCustomers <= 100)
+		if (nCustomers * nRounds <= 100)
 			this.renderEvents(events);
 	}
 
