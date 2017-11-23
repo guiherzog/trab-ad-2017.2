@@ -2,14 +2,14 @@ const { QueueSystem } = require('./src/QueueSystem');
 
 let QueueSystem1 = new QueueSystem();
 
-// Roda a simulação com rho 0.2
-
 function addFormListener(){
 	$("#runForm").submit((e)=>{
 		e.preventDefault();
-		let rho = $("#rhoField").val();
-		if (rho > 0){
-			QueueSystem1.runSimulation(10000, 1, rho); // nCustomers, nRounds, rho
+		let nCustomers = parseInt($("#nCustomersField").val());
+		let nRounds = parseInt($("#nRoundsField").val());
+		let rho = parseFloat($("#rhoField").val());
+		if (nCustomers > 0 && nRounds > 0 && rho > 0){
+			QueueSystem1.runSimulation(nCustomers, nRounds, rho);
 		} else {
 			renderNotification('top', 'center');
 		}
@@ -17,20 +17,19 @@ function addFormListener(){
 	})
 }
 
-// Alerta o usuário caso ele insira um rho menor que zero.
+// Alerta o usuário caso ele deixe de preencher algum campo ou deixe-o menor que 0
 function renderNotification(from, align){
 	$.notify({
-			icon: "memory",
-			message: "A utilização precisa ser maior que ZERO."
-
-		},{
-				type: 'danger',
-				timer: 2000,
-				placement: {
-						from: from,
-						align: align
-				}
-		});
+		icon: "memory",
+		message: "Todos os campos são obrigatórios e precisam ser maiores que ZERO."
+	},{
+		type: 'danger',
+		timer: 2000,
+		placement: {
+			from: from,
+			align: align
+		}
+	});
 }
 
 addFormListener();
