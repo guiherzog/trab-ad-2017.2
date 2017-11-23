@@ -135,51 +135,51 @@ class QueueSystem {
 				}
 			}
 			/*
-				Após a simulação ser atualizada até o momento da chegada de um novo freguês, primeiramente é necessário verificar se ainda é possível cria-lo.
-				Nesta simulação, um freguês novo só entra no sistema se o próximo ID a ser criado for menor que o número de consumidores recebidos de entrada.
-				Mesmo no caso onde nenhum freguês possa ser criado por ter chegado ao limite, a simulação continua executando em taxa baseada na chegada.
+				Consumidores continuam sendo criados mesmo após atingir o limite de consumidores para a rodada.
+				Isto acontece para preservar a utilização da fila, já que se não criassemos consumidores após o limite, as filas começariam a esvaziar
+				até o momento onde o último freguês da fila 2 executaria, sendo o único freguês em todo o sistema.
+				Apesar de novos fregueses serem criados, eles não influenciam as métricas de Esperança, por não fazerem parte do número de consumidores esperado
+				por rodada. Entretanto, a presença deles no sistema irá influenciar no cálculo da Esperança do tempo de espera da fila 2.
 			*/
-			if (nextCustomerId < nCustomers * nRounds){
-				// Verificando qual é o round atual para salvar corretamente as esperanças obtidas na criação de um novo consumidor.
-				let currentRound = Math.floor(nextCustomerId / nCustomers);
-				// Criação dos tempos de execução X1 e X2 para o próximo freguês
-				let service1Time = Utils.getRandomExp(mi);
-				let service2Time = Utils.getRandomExp(mi);
-				// Ambos tempos precisam ser adicionados no cálculo da esperança de X1 e X2
-				X1Avg[currentRound] += service1Time;
-				X2Avg[currentRound] += service2Time;
-				let customer = new Customer(nextCustomerId, currentTime, service1Time, service2Time);
-				/*
-					No momento que um freguês chega, é necessário verificar o estado de ambas filas para atualizar a Esperança de Nq1 e Nq2.
-					Para este cálculo, usamos o tamanho das filas 1 e 2. Apesar de isso parecer certo num primeiro momento, o código desta simulação
-					não remove um freguês de sua fila no momento em que ele passa a executar. Isso só acontece no instante em que ele termina seu tempo de execução
-					para aquela fila. Por conta disso, é necessário diminuir o valor de Nq1/Nq2 em 1 se alguém daquela fila estiver executando.
-					Este procedimento é executado um pouco mais abaixo.
-				*/
-				Nq1Avg[currentRound] += queue1.length;
-				Nq2Avg[currentRound] += queue2.length;
-				// Freguês é adicionado na fila 1 (já que é a única fila com chegadas externas), e é criado um evento para sua chegada.
-				queue1.push(customer);
-				events.push(new Event(currentTime, customer.id + customerIndexStartsFrom, EventType.SYSTEM_ARRIVAL, 1));
-				// Se não existe ninguém executando, o freguês que chegou vai diretamente ao servidor.
-				if (executingCustomer == null){
+			// Verificando qual é o round atual para salvar corretamente as esperanças obtidas na criação de um novo consumidor.
+			let currentRound = Math.floor(nextCustomerId / nCustomers);
+			// Criação dos tempos de execução X1 e X2 para o próximo freguês
+			let service1Time = Utils.getRandomExp(mi);
+			let service2Time = Utils.getRandomExp(mi);
+			// Ambos tempos precisam ser adicionados no cálculo da esperança de X1 e X2
+			X1Avg[currentRound] += service1Time;
+			X2Avg[currentRound] += service2Time;
+			let customer = new Customer(nextCustomerId, currentTime, service1Time, service2Time);
+			/*
+				No momento que um freguês chega, é necessário verificar o estado de ambas filas para atualizar a Esperança de Nq1 e Nq2.
+				Para este cálculo, usamos o tamanho das filas 1 e 2. Apesar de isso parecer certo num primeiro momento, o código desta simulação
+				não remove um freguês de sua fila no momento em que ele passa a executar. Isso só acontece no instante em que ele termina seu tempo de execução
+				para aquela fila. Por conta disso, é necessário diminuir o valor de Nq1/Nq2 em 1 se alguém daquela fila estiver executando.
+				Este procedimento é executado um pouco mais abaixo.
+			*/
+			Nq1Avg[currentRound] += queue1.length;
+			Nq2Avg[currentRound] += queue2.length;
+			// Freguês é adicionado na fila 1 (já que é a única fila com chegadas externas), e é criado um evento para sua chegada.
+			queue1.push(customer);
+			events.push(new Event(currentTime, customer.id + customerIndexStartsFrom, EventType.SYSTEM_ARRIVAL, 1));
+			// Se não existe ninguém executando, o freguês que chegou vai diretamente ao servidor.
+			if (executingCustomer == null){
+				executingCustomer = customer;
+			} else {
+				// Se existe alguém da fila 1 executando, é necessário atualizar as Esperanças de Nq1 e Ns1.
+				if (executingCustomer.priority == 1){
+					Nq1Avg[currentRound]--;
+					Ns1Avg[currentRound]++;
+				} 
+				// Se existe alguém da fila 2 executando, é necessário atualizar as Esperanças de Nq1 e Ns1.
+				// Além disso, por conta de prioridade, o freguês que chegou no sistema toma o lugar do freguês da fila 2 que estava no servidor.
+				else {
 					executingCustomer = customer;
-				} else {
-					// Se existe alguém da fila 1 executando, é necessário atualizar as Esperanças de Nq1 e Ns1.
-					if (executingCustomer.priority == 1){
-						Nq1Avg[currentRound]--;
-						Ns1Avg[currentRound]++;
-					} 
-					// Se existe alguém da fila 2 executando, é necessário atualizar as Esperanças de Nq1 e Ns1.
-					// Além disso, por conta de prioridade, o freguês que chegou no sistema toma o lugar do freguês da fila 2 que estava no servidor.
-					else {
-						executingCustomer = customer;
-						Nq2Avg[currentRound]--;
-						Ns2Avg[currentRound]++;
-					}
+					Nq2Avg[currentRound]--;
+					Ns2Avg[currentRound]++;
 				}
-				nextCustomerId++; // Incrementando ID a ser utilizado na criação de fregueses
 			}
+			nextCustomerId++; // Incrementando ID a ser utilizado na criação de fregueses
 
 			/* 
 				A cada 100 iterações, adiciona o rho atual na lista e renderiza o chart.
@@ -190,7 +190,6 @@ class QueueSystem {
 				this.renderRhoChart(nextCustomerId/100, rhoQueue1PerTime);
 			}
 		}
-
 		/*
 			Com o final da execução da simulação, é hora de pegar todas as Esperanças coletadas e fazer suas médias.
 			Para isso basta dividi-las pelo número de consumidores que passaram pelo sistema.
