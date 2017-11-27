@@ -1,0 +1,19 @@
+sem transiente (1000000)
+
+Valores médios gerais da Simulação:
+
+				Nq1 médio = 0.128916
+				Ns1 médio = 0.30106
+				N1  médio = 0.429976
+
+				Nq2 médio = 1.096962
+				Ns2 médio = 0.299788
+				N2  médio = 1.39675
+
+				W1 médio = 0.42895524802109397
+				X1 médio = 0.9996895163952412
+				T1 médio = 1.4286447644163351
+
+				W2 médio = 3.6573915024398316
+				X2 médio = 1.0005601291590867
+				T2 médio = 4.657951631598918
