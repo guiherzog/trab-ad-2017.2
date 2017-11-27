@@ -286,28 +286,6 @@ class QueueSystem {
 				T2 médio = ${T2AvgSim}
 		`);
 
-		// Não dá pra renderizar a lista de eventos para mais de 100 fregueses.
-		if (nCustomers * nRounds <= 100)
-			this.renderEvents(events);
-	}
-
-	renderEvents(events){
-		document.getElementById("eventsList").innerHTML = "";
-		let tRows = ``;
-		for (let i = 0; i <= events.length; i++) {
-			if (!events[i])
-				break;
-			tRows +=`
-				<tr>
-					<td>${i + 1}</td>
-					<td>${events[i].time.toFixed(3)} </td>
-					<td>${events[i].type}</td>
-					<td>${events[i].customerId}</td>
-					<td>${events[i].priority}</td>
-				</tr>
-			`;
-			document.getElementById("eventsList").innerHTML = tRows;
-		}
 	}
 
 	// Método que renderiza o gráfico do rho em função do mundo de fregueses.
