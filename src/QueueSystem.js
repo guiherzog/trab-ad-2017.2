@@ -15,12 +15,15 @@ class QueueSystem {
 	runSimulation(nTransient, nCustomers, nRounds, rho){
 		let lambda = rho/2;
 		let mi = 1;
+		document.getElementById("simTitle").innerHTML = 
+			"Executando simulação...";
 
 		let startTime = new Date().getTime();
 		this.runRounds(nTransient, nCustomers, nRounds, lambda, mi);
 		let endTime = new Date().getTime();
 
-		console.log(`Tempo total: ${(endTime -  startTime)/1000}`);
+		document.getElementById("simTitle").innerHTML = 
+			"Simulação finalizada em "+((endTime -  startTime)/1000)+" segundos";
 	}
 
 	/*
@@ -242,6 +245,9 @@ class QueueSystem {
 		let X1AvgSim = 0;
 		let X2AvgSim = 0;
 
+		document.getElementById("meanList").innerHTML = "";
+		let meanRows = ``;
+
 		// Exibição das Esperanças por rodada
 		for (var i = 0; i < nRounds; i++) {
 			Nq1Avg[i] /= nCustomers;
@@ -256,6 +262,20 @@ class QueueSystem {
 			W2Avg[i] /= nCustomers;
 			X2Avg[i] /= nCustomers;
 			let T2Avg = W2Avg[i] + X2Avg[i];
+
+			// Renderiza tabela de esperanças de cada rodada
+			meanRows +=`
+ 				<tr>
+ 					<td>${i + 1}</td>
+ 					<td>${W1Avg[i].toFixed(5)} </td>
+ 					<td>${Nq1Avg[i].toFixed(5)}</td>
+ 					<td>${(W2Avg[i]+X2Avg[i]).toFixed(5)}</td>
+ 					<td>${(Nq2Avg[i]+Ns2Avg[i]).toFixed(5)}</td>
+ 					<td>${W2Avg[i].toFixed(5)}</td>
+ 					<td>${Nq2Avg[i].toFixed(5)}</td>
+ 				</tr>
+			`;
+
 
 			console.log(`
 				Valores médios:
@@ -301,6 +321,22 @@ class QueueSystem {
 		X2AvgSim /= nRounds;
 		let T2AvgSim = W2AvgSim + X2AvgSim;
 
+		// Renderiza tabela de esperanças total
+		meanRows +=`
+			<tr>
+				<td><strong>Total</strong></td>
+				<td><strong>${W1AvgSim.toFixed(5)}</strong></td>
+				<td><strong>${Nq1AvgSim.toFixed(5)}</strong></td>
+				<td><strong>${(W2AvgSim+X2AvgSim).toFixed(5)}</strong></td>
+				<td><strong>${(Nq2AvgSim+Ns2AvgSim).toFixed(5)}</strong></td>
+				<td><strong>${W2AvgSim.toFixed(5)}</strong></td>
+				<td><strong>${Nq2AvgSim.toFixed(5)}</strong></td>
+			</tr>
+		`;
+
+		// Renderiza tabela de esperanças.
+		document.getElementById("meanList").innerHTML = meanRows;
+		
 		console.log(`
 			Valores médios gerais da Simulação:
 
@@ -340,7 +376,7 @@ class QueueSystem {
 		const optionsRhoChart = {
 			axisX: {
 				labelInterpolationFnc: function skipLabels(value, index) {
-					return index % 10  === 0 ? value : null;
+					return index % 100  === 0 ? value : null;
 				}
 			},
 			lineSmooth: Chartist.Interpolation.cardinal({

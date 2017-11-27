@@ -20,31 +20,8 @@
 			<div class="container-fluid">
 				<nav class="navbar navbar-transparent navbar">
 					<div class="container-fluid">
-						<a id="instruction" class="navbar-brand" href="#">Atendendo Fregues 01</a>
-						<a id="playButton" href="#" class="navbar-brand">
-							<i class="material-icons">play_arrow</i>
-						</a>
-						<a id="playAllButton" href="#" class="navbar-brand">
-							<i class="material-icons">fast_forward</i>
-						</a>
-						<a id="stopButton" href="#" class="navbar-brand">
-							<i class="material-icons">stop</i>
-						</a>
+						<a id="simTitle" class="navbar-brand" href="#">Simulação Filas com Prioridade</a>
 						<div class="collapse navbar-collapse">
-							<div class="navbar-header">
-								<ul class="nav navbar-nav navbar-left">
-									</li>
-									<li class="dropdown">
-										<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-											<i class="material-icons">notifications</i>
-											<span class="notification" id="numberLogs"></span>
-											<p class="hidden-lg hidden-md">Últimos eventos adicionados</p>
-										</a>
-										<ul class="dropdown-menu" id="instructionLog"></ul>
-									</li>
-								</ul>
-							</div>
-
 							<form id="runForm" class="navbar-form navbar-right" role="search">
 								<div class="form-group  is-empty">
 									<input id="nTransient" type="text" class="form-control" placeholder="Período Transiente">
@@ -70,8 +47,8 @@
 					</div>
 				</nav>
 				<!-- List of general details about all memories-->
-				<div class="row">
-<!-- 					<div class="col-lg-3 col-md-3 col-sm-6">
+<!-- 				<div class="row">
+					<div class="col-lg-3 col-md-3 col-sm-6">
 						<div class="card card-stats">
 							<div class="card-header" data-background-color="blue">
 								<i class="material-icons">library_books</i>
@@ -134,26 +111,6 @@
 								</div>
 							</div>
 						</div>
-					</div>
-					<div class="col-lg-5 col-md-12 col-sm-6">
-						<div class="card">
-							<div class="card-header" data-background-color="orange">
-								<h4 class="title">Lista de Eventos</h4>
-								<p class="category"></p>
-							</div>
-							<div class="card-content table-responsive">
-								<table class="table table-hover">
-									<thead class="text-warning">
-										<th>#</th>
-										<th>Tempo</th>
-										<th>Tipo</th>
-										<th>Freguês</th>
-										<th>Prioridade</th>
-									</thead>
-									<tbody id="eventsList"></tbody>
-								</table>
-							</div>
-						</div>
 					</div> -->
 					<div class="col-lg-6 col-md-12 col-sm-12">
 						<div class="card">
@@ -175,12 +132,33 @@
 							</div>
 						</div>
 					</div>
+					<div class="col-lg-12 col-md-12 col-sm-6">
+						<div class="card">
+							<div class="card-header" data-background-color="orange">
+								<h4 class="title">Esperanças da Fila durante cada rodada</h4>
+								<p class="category"></p>
+							</div>
+							<div class="card-content table-responsive">
+								<table class="table table-hover">
+									<thead class="text-warning">
+										<th>Rodada</th>
+										<th>E[W1]</th>
+										<th>E[Nq1]</th>
+										<th>E[T2]</th>
+										<th>E[N2]</th>
+										<th>E[W2]</th>
+										<th>E[Nq2]</th>
+									</thead>
+									<tbody id="meanList"></tbody>
+								</table>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 		<footer class="footer">
 			<div class="container-fluid">
-				<nav class="pull-left">
 					Desenvolvedores:
 					<ul>
 						<li>
@@ -199,7 +177,6 @@
 							</a>
 						</li>
 					</ul>
-				</nav>
 				<p class="copyright pull-right">
 					Trabalho de Avaliação de Desempenho 2017.2 - Prof. Paulo Aguiar.
 				</p>
