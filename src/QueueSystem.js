@@ -211,16 +211,16 @@ class QueueSystem {
 				A cada 100 iterações, adiciona o rho atual na lista e renderiza o chart.
 				Não tá otimizado ainda.
 			*/
-			if (nextCustomerId >= 0 && nextCustomerId % 100 === 0) {
+			if (nextCustomerId % 100 === 0) {
 				let totalId = (nextCustomerId + nTransient);
 
 				let totalNs1 = Ns1Avg[-1] + Ns1Avg[0];
 				rhoQueue1PerTime.push(totalNs1 / totalId);
-				this.renderChart(nextCustomerId / 100, rhoQueue1PerTime, '#chart1');
+				this.renderChart(nTransient, totalId / 100, rhoQueue1PerTime, '#chart1');
 
 				let totalW1 = W1Avg[-1] + W1Avg[0];
 				w1PerTime.push(totalW1 / totalId);
-				this.renderChart(nextCustomerId / 100, w1PerTime, '#chart2');
+				this.renderChart(nTransient, totalId / 100, w1PerTime, '#chart2');
 			}
 
 
@@ -324,15 +324,17 @@ class QueueSystem {
 	}
 
 	// Método que renderiza um gráfico em função do mundo de fregueses.
-	renderChart(nCustomers, dataPerTime, chartId){
+	renderChart(nTransient, nCustomers, dataPerTime, chartId){
 		let labelArray = [nCustomers];
 		for (let i = 0; i < nCustomers; i++) {
 			labelArray[i] = i*100;
 		};
 
+		const transientValues = dataPerTime.slice(0,nTransient/100 + 1);
+
 		const dataRhoChart = {
 				labels: labelArray,
-				series: [dataPerTime]
+				series: [dataPerTime, transientValues], 
 		};
 
 		const optionsRhoChart = {
