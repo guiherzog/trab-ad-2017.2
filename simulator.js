@@ -5,9 +5,10 @@ let QueueSystem1 = new QueueSystem();
 function addFormListener(){
 	$("#runForm").submit((e)=>{
 		e.preventDefault();
-		let nCustomers = parseInt($("#nCustomersField").val());
-		let nRounds = parseInt($("#nRoundsField").val());
-		let rho = parseFloat($("#rhoField").val());
+		// Valores defaults dos parametros
+		let nCustomers = parseInt($("#nCustomersField").val()) || 10000;
+		let nRounds = parseInt($("#nRoundsField").val()) || 1;
+		let rho = parseFloat($("#rhoField").val()) || 0.4;
 		if (nCustomers > 0 && nRounds > 0 && rho > 0){
 			QueueSystem1.runSimulation(nCustomers, nRounds, rho);
 		} else {

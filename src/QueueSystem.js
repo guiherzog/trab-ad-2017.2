@@ -54,13 +54,23 @@ class QueueSystem {
 		let W2Avg = new Array(nRounds).fill(0);
 		let X1Avg = new Array(nRounds).fill(0);
 		let X2Avg = new Array(nRounds).fill(0);
+
+		// Índice -1 é um "round" reservado para a fase transiente
+		Ns1Avg[-1] = 0;
+		W1Avg[-1] = 0;
+
+		let nTransient = 10000; // Número de fregueses na fase transiente
+
 		let currentTime = 0; // Variável que representa o tempo atual da simulação.
 
 		let customerIndexStartsFrom = 1; // Variável para representar os indíces a partir de 1. Objetivo estético.
-		let nextCustomerId = 0; // Variável que representa o próximo ID que deve ser usado na criação de um freguês.
+		let nextCustomerId = -nTransient; // Variável que representa o próximo ID que deve ser usado na criação de um freguês. IDs menores que 0 representam o periodo transiente
 		let nServiceEnd2 = 0; // Variável que representa quantos fregueses já saíram do sistema.
 		let executingCustomer = null; // Variável que representa qual o freguês que está atualmente executando no servidor.
-		let rhoQueue1PerTime = []; // Lista com rho a cada algumas iterações.
+		
+		// Listas com o valor da variável a cada x iterações, a ser passado para gerar o gráfico
+		let rhoQueue1PerTime = [];
+		let w1PerTime = [];
 
 		// Loop da simulação é executado até nCustomers terem saído do sistema
 		while (nServiceEnd2 < nCustomers * nRounds) {
@@ -76,8 +86,16 @@ class QueueSystem {
 			while (time > 0 && executingCustomer != null){
 				// Verifica se o freguês que está atualmente no servidor conseguirá terminar de executar com o tempo restante antes da próxima chegada
 				if (executingCustomer.remainingTime <= time){
-					// Verificando qual é o round do consumidr que está atualmente executando para armazenar suas esperanças corretamente.
-					let executingCustomerRound = Math.floor(executingCustomer.id / nCustomers);
+
+					let executingCustomerRound;
+
+					// Período transiente
+					if(executingCustomer.id < 0) 
+						executingCustomerRound = -1;
+					else 
+						// Verificando qual é o round do consumidor que está atualmente executando para armazenar suas esperanças corretamente.
+						executingCustomerRound = Math.floor(executingCustomer.id / nCustomers);
+
 					// Neste caso, é necessário diminuir o tempo restante antes da próxima chegada em uma quantidade igual ao tempo de execução restante do freguês
 					time -= executingCustomer.remainingTime;
 					executingCustomer.remainingTime = 0;
@@ -112,7 +130,9 @@ class QueueSystem {
 					else {
 						W2Avg[executingCustomerRound] += ((currentTime - time) - executingCustomer.arrival2) - executingCustomer.X2;
 						queue2.shift(); // Shift() é uma função de array que remove seu primeiro elemento, e atualiza os índices de todos os elementos.
-						nServiceEnd2++;
+						// Apenas considerando fregueses que saíram e que não fazem parte do período transiente.
+						if (executingCustomer.id >= 0)
+							nServiceEnd2++;
 					}
 					/*
 						Após terminar a execução do freguês que estava no servidor, precisamos colocar o próximo freguês lá.
@@ -141,8 +161,16 @@ class QueueSystem {
 				Apesar de novos fregueses serem criados, eles não influenciam as métricas de Esperança, por não fazerem parte do número de consumidores esperado
 				por rodada. Entretanto, a presença deles no sistema irá influenciar no cálculo da Esperança do tempo de espera da fila 2.
 			*/
-			// Verificando qual é o round atual para salvar corretamente as esperanças obtidas na criação de um novo consumidor.
-			let currentRound = Math.floor(nextCustomerId / nCustomers);
+
+			let currentRound;
+
+			// Período transiente
+			if(nextCustomerId < 0) 
+				currentRound = -1;
+			else
+				// Verificando qual é o round atual para salvar corretamente as esperanças obtidas na criação de um novo consumidor.
+				currentRound = Math.floor(nextCustomerId / nCustomers);
+
 			// Criação dos tempos de execução X1 e X2 para o próximo freguês
 			let service1Time = Utils.getRandomExp(mi);
 			let service2Time = Utils.getRandomExp(mi);
@@ -185,10 +213,19 @@ class QueueSystem {
 				A cada 100 iterações, adiciona o rho atual na lista e renderiza o chart.
 				Não tá otimizado ainda.
 			*/
-			if (nextCustomerId % 100 === 0) {
-				rhoQueue1PerTime.push(Ns1Avg/nextCustomerId);
-				this.renderRhoChart(nextCustomerId/100, rhoQueue1PerTime);
+			if (nextCustomerId >= 0 && nextCustomerId % 100 === 0) {
+				let totalId = (nextCustomerId + nTransient);
+
+				let totalNs1 = Ns1Avg[-1] + Ns1Avg[0];
+				rhoQueue1PerTime.push(totalNs1 / totalId);
+				this.renderChart(nextCustomerId / 100, rhoQueue1PerTime, '#chart1');
+
+				let totalW1 = W1Avg[-1] + W1Avg[0];
+				w1PerTime.push(totalW1 / totalId);
+				this.renderChart(nextCustomerId / 100, w1PerTime, '#chart2');
 			}
+
+
 		}
 		/*
 			Com o final da execução da simulação, é hora de pegar todas as Esperanças coletadas e fazer suas médias.
@@ -288,16 +325,16 @@ class QueueSystem {
 
 	}
 
-	// Método que renderiza o gráfico do rho em função do mundo de fregueses.
-	renderRhoChart(nCustomers, rhoQueue1PerTime){
+	// Método que renderiza um gráfico em função do mundo de fregueses.
+	renderChart(nCustomers, dataPerTime, chartId){
 		let labelArray = [nCustomers];
-		for (var i = 1; i <= nCustomers; i++) {
-			labelArray[i-1] = i*100;
+		for (let i = 0; i < nCustomers; i++) {
+			labelArray[i] = i*100;
 		};
 
 		const dataRhoChart = {
 				labels: labelArray,
-				series: [rhoQueue1PerTime]
+				series: [dataPerTime]
 		};
 
 		const optionsRhoChart = {
@@ -313,7 +350,7 @@ class QueueSystem {
 			chartPadding: { top: 30, right: 5, bottom: 0, left: 0},
 		}
 
-		let rhoChart = new Chartist.Line('#rhoChart', dataRhoChart, optionsRhoChart);
+		let rhoChart = new Chartist.Line(chartId, dataRhoChart, optionsRhoChart);
 	}
 }
 
