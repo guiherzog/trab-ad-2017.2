@@ -12,12 +12,12 @@ class QueueSystem {
 		Roda uma simulação com n fregueses, m vezes.
 		Calculando o lambda e mi de modo a manter o rho definido no parametro.
 	*/
-	runSimulation(nCustomers, nRounds, rho){
+	runSimulation(nTransient, nCustomers, nRounds, rho){
 		let lambda = rho/2;
 		let mi = 1;
 
 		let startTime = new Date().getTime();
-		this.runRounds(nCustomers, nRounds, lambda, mi);
+		this.runRounds(nTransient, nCustomers, nRounds, lambda, mi);
 		let endTime = new Date().getTime();
 
 		console.log(`Tempo total: ${(endTime -  startTime)/1000}`);
@@ -40,7 +40,7 @@ class QueueSystem {
 	/* 
 		Executa uma rodada da simulação com n fregueses.
 	*/
-	runRounds(nCustomers, nRounds, lambda, mi) {
+	runRounds(nTransient, nCustomers, nRounds, lambda, mi) {
 		// Inicialização de estruturas de dados para representar as filas e eventos
 		let events = [];
 		let queue1 = [];
@@ -58,8 +58,6 @@ class QueueSystem {
 		// Índice -1 é um "round" reservado para a fase transiente
 		Ns1Avg[-1] = 0;
 		W1Avg[-1] = 0;
-
-		let nTransient = 10000; // Número de fregueses na fase transiente
 
 		let currentTime = 0; // Variável que representa o tempo atual da simulação.
 

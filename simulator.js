@@ -7,10 +7,11 @@ function addFormListener(){
 		e.preventDefault();
 		// Valores defaults dos parametros
 		let nCustomers = parseInt($("#nCustomersField").val()) || 10000;
+		let nTransient = parseInt($("#nTransient").val()) || 3000;
 		let nRounds = parseInt($("#nRoundsField").val()) || 1;
 		let rho = parseFloat($("#rhoField").val()) || 0.4;
-		if (nCustomers > 0 && nRounds > 0 && rho > 0){
-			QueueSystem1.runSimulation(nCustomers, nRounds, rho);
+		if (nTransient >= 0 && nCustomers > 0 && nRounds > 0 && rho > 0){
+			QueueSystem1.runSimulation(nTransient, nCustomers, nRounds, rho);
 		} else {
 			renderNotification('top', 'center');
 		}
