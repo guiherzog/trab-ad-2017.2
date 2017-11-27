@@ -376,13 +376,13 @@ class QueueSystem {
 		const optionsRhoChart = {
 			axisX: {
 				labelInterpolationFnc: function skipLabels(value, index) {
-					return index % 100  === 0 ? value : null;
+					return (index % 10) === 0 ? value : null;
 				}
 			},
 			lineSmooth: Chartist.Interpolation.cardinal({
 				tension: 0
 			}),
-			height: 160,
+			height: 200,
 			chartPadding: { top: 30, right: 5, bottom: 0, left: 0},
 		}
 
