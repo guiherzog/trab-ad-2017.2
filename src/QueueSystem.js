@@ -277,25 +277,25 @@ class QueueSystem {
 			`;
 
 
-			console.log(`
-				Valores médios:
+			// console.log(`
+			// 	Valores médios:
 
-					Nq1 médio = ${Nq1Avg[i]}
-					Ns1 médio = ${Ns1Avg[i]}
-					N1  médio = ${N1Avg}
+			// 		Nq1 médio = ${Nq1Avg[i]}
+			// 		Ns1 médio = ${Ns1Avg[i]}
+			// 		N1  médio = ${N1Avg}
 
-					Nq2 médio = ${Nq2Avg[i]}
-					Ns2 médio = ${Ns2Avg[i]}
-					N2  médio = ${N2Avg}
+			// 		Nq2 médio = ${Nq2Avg[i]}
+			// 		Ns2 médio = ${Ns2Avg[i]}
+			// 		N2  médio = ${N2Avg}
 
-					W1 médio = ${W1Avg[i]}
-					X1 médio = ${X1Avg[i]}
-					T1 médio = ${T1Avg}
+			// 		W1 médio = ${W1Avg[i]}
+			// 		X1 médio = ${X1Avg[i]}
+			// 		T1 médio = ${T1Avg}
 
-					W2 médio = ${W2Avg[i]}
-					X2 médio = ${X2Avg[i]}
-					T2 médio = ${T2Avg}
-			`);
+			// 		W2 médio = ${W2Avg[i]}
+			// 		X2 médio = ${X2Avg[i]}
+			// 		T2 médio = ${T2Avg}
+			// `);
 
 			Ns1AvgSim += Ns1Avg[i];
 			Nq1AvgSim += Nq1Avg[i];
@@ -337,25 +337,25 @@ class QueueSystem {
 		// Renderiza tabela de esperanças.
 		document.getElementById("meanList").innerHTML = meanRows;
 		
-		console.log(`
-			Valores médios gerais da Simulação:
+		// console.log(`
+		// 	Valores médios gerais da Simulação:
 
-				Nq1 médio = ${Nq1AvgSim}
-				Ns1 médio = ${Ns1AvgSim}
-				N1  médio = ${N1AvgSim}
+		// 		Nq1 médio = ${Nq1AvgSim}
+		// 		Ns1 médio = ${Ns1AvgSim}
+		// 		N1  médio = ${N1AvgSim}
 
-				Nq2 médio = ${Nq2AvgSim}
-				Ns2 médio = ${Ns2AvgSim}
-				N2  médio = ${N2AvgSim}
+		// 		Nq2 médio = ${Nq2AvgSim}
+		// 		Ns2 médio = ${Ns2AvgSim}
+		// 		N2  médio = ${N2AvgSim}
 
-				W1 médio = ${W1AvgSim}
-				X1 médio = ${X1AvgSim}
-				T1 médio = ${T1AvgSim}
+		// 		W1 médio = ${W1AvgSim}
+		// 		X1 médio = ${X1AvgSim}
+		// 		T1 médio = ${T1AvgSim}
 
-				W2 médio = ${W2AvgSim}
-				X2 médio = ${X2AvgSim}
-				T2 médio = ${T2AvgSim}
-		`);
+		// 		W2 médio = ${W2AvgSim}
+		// 		X2 médio = ${X2AvgSim}
+		// 		T2 médio = ${T2AvgSim}
+		// `);
 
 	}
 

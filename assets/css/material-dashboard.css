@@ -3036,7 +3036,7 @@ fieldset[disabled] .form-group.is-focused .togglebutton label {
   margin: 4px 0 0;
 }
 .navbar .navbar-form .form-group {
-  margin: 0;
+  margin: 0 10px 0 0;
   padding: 0;
 }
 .navbar .navbar-form .form-group .material-input:before, .navbar .navbar-form .form-group.is-focused .material-input:after {
