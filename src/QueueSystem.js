@@ -60,7 +60,13 @@ class QueueSystem {
 
 		// Índice -1 é um "round" reservado para a fase transiente
 		Ns1Avg[-1] = 0;
+		Nq1Avg[-1] = 0;
+		Ns2Avg[-1] = 0;
+		Nq2Avg[-1] = 0;
 		W1Avg[-1] = 0;
+		W2Avg[-1] = 0;
+		X1Avg[-1] = 0;
+		X2Avg[-1] = 0;
 
 		let currentTime = 0; // Variável que representa o tempo atual da simulação.
 
@@ -70,8 +76,12 @@ class QueueSystem {
 		let executingCustomer = null; // Variável que representa qual o freguês que está atualmente executando no servidor.
 		
 		// Listas com o valor da variável a cada x iterações, a ser passado para gerar o gráfico
-		let rhoQueue1PerTime = [];
-		let w1PerTime = [];
+		let ns1PerTime = [];
+		let nq1PerTime = [];
+		let w1PerTime  = [];
+		let ns2PerTime = [];
+		let nq2PerTime = [];
+		let w2PerTime  = [];
 
 		// Loop da simulação é executado até nCustomers terem saído do sistema
 		while (nServiceEnd2 < nCustomers * nRounds) {
@@ -218,12 +228,28 @@ class QueueSystem {
 				let totalId = (nextCustomerId + nTransient);
 
 				let totalNs1 = Ns1Avg[-1] + Ns1Avg[0];
-				rhoQueue1PerTime.push(totalNs1 / totalId);
-				this.renderChart(nTransient, totalId / 100, rhoQueue1PerTime, '#chart1');
+				ns1PerTime.push(totalNs1 / totalId);
+				this.renderChart(nTransient, totalId / 100, ns1PerTime, '#chartNs1');
+
+				let totalNq1 = Nq1Avg[-1] + Nq1Avg[0];
+				nq1PerTime.push(totalNq1 / totalId);
+				this.renderChart(nTransient, totalId / 100, nq1PerTime, '#chartNq1');
 
 				let totalW1 = W1Avg[-1] + W1Avg[0];
 				w1PerTime.push(totalW1 / totalId);
-				this.renderChart(nTransient, totalId / 100, w1PerTime, '#chart2');
+				this.renderChart(nTransient, totalId / 100, w1PerTime, '#chartW1');
+
+				let totalNs2 = Ns2Avg[-1] + Ns2Avg[0];
+				ns2PerTime.push(totalNs2 / totalId);
+				this.renderChart(nTransient, totalId / 100, ns2PerTime, '#chartNs2');
+
+				let totalNq2 = Nq2Avg[-1] + Nq2Avg[0];
+				nq2PerTime.push(totalNq2 / totalId);
+				this.renderChart(nTransient, totalId / 100, nq2PerTime, '#chartNq2');
+
+				let totalW2 = W2Avg[-1] + W2Avg[0];
+				w2PerTime.push(totalW2 / totalId);
+				this.renderChart(nTransient, totalId / 100, w2PerTime, '#chartW2');
 			}
 
 
@@ -384,6 +410,7 @@ class QueueSystem {
 			}),
 			height: 200,
 			chartPadding: { top: 30, right: 5, bottom: 0, left: 0},
+			showPoint: false,
 		}
 
 		let rhoChart = new Chartist.Line(chartId, dataRhoChart, optionsRhoChart);
