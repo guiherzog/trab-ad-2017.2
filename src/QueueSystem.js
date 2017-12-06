@@ -84,6 +84,15 @@ class QueueSystem {
 		let w2PerTime  = [];
 
 		let nPoints = 200; // Quantos pontos serão coletados para o gráfico
+		if(nCustomers + nTransient < nPoints)
+			nPoints = nCustomers + nTransient;
+
+		let currentNs1;
+		let currentNq1;
+		let currentW1;
+		let currentNs2;
+		let currentNq2;
+		let currentW2;
 
 		// Loop da simulação é executado até nCustomers terem saído do sistema
 		while (nServiceEnd2 < nCustomers * nRounds) {
@@ -126,7 +135,8 @@ class QueueSystem {
 							Para isso, utilizamos (currentTime - time), que representa o momento de fim de serviço,
 							que é diminuído do momento de chegada do freguês na fila 1 (que é o momento de chegada no sistema).
 						*/
-						W1Avg[executingCustomerRound] += ((currentTime - time) - executingCustomer.arrival1) - executingCustomer.X1;
+						currentW1 = ((currentTime - time) - executingCustomer.arrival1) - executingCustomer.X1;
+						W1Avg[executingCustomerRound] += currentW1;
 						queue1.shift(); // Shift() é uma função de array que remove seu primeiro elemento, e atualiza os índices de todos os elementos.
 						executingCustomer.priority = 2;
 						executingCustomer.arrival2 = currentTime - time;
@@ -141,7 +151,8 @@ class QueueSystem {
 						e atualizar o número de fregueses que saíram do sistema.
 					*/
 					else {
-						W2Avg[executingCustomerRound] += ((currentTime - time) - executingCustomer.arrival2) - executingCustomer.X2;
+						currentW2 = ((currentTime - time) - executingCustomer.arrival2) - executingCustomer.X2;
+						W2Avg[executingCustomerRound] += currentW2;
 						queue2.shift(); // Shift() é uma função de array que remove seu primeiro elemento, e atualiza os índices de todos os elementos.
 						// Apenas considerando fregueses que saíram e que não fazem parte do período transiente.
 						if (executingCustomer.id >= 0)
@@ -198,8 +209,13 @@ class QueueSystem {
 				para aquela fila. Por conta disso, é necessário diminuir o valor de Nq1/Nq2 em 1 se alguém daquela fila estiver executando.
 				Este procedimento é executado um pouco mais abaixo.
 			*/
-			Nq1Avg[currentRound] += queue1.length;
-			Nq2Avg[currentRound] += queue2.length;
+			currentNq1 = queue1.length;
+			Nq1Avg[currentRound] += currentNq1;
+			currentNq2 = queue2.length;
+			Nq2Avg[currentRound] += currentNq2;
+
+			currentNs1 = currentNs2 = 0;
+
 			// Freguês é adicionado na fila 1 (já que é a única fila com chegadas externas), e é criado um evento para sua chegada.
 			queue1.push(customer);
 			events.push(new Event(currentTime, customer.id + customerIndexStartsFrom, EventType.SYSTEM_ARRIVAL, 1));
@@ -209,14 +225,18 @@ class QueueSystem {
 			} else {
 				// Se existe alguém da fila 1 executando, é necessário atualizar as Esperanças de Nq1 e Ns1.
 				if (executingCustomer.priority == 1){
+					currentNq1--;
 					Nq1Avg[currentRound]--;
+					currentNs1++;
 					Ns1Avg[currentRound]++;
 				} 
 				// Se existe alguém da fila 2 executando, é necessário atualizar as Esperanças de Nq1 e Ns1.
 				// Além disso, por conta de prioridade, o freguês que chegou no sistema toma o lugar do freguês da fila 2 que estava no servidor.
 				else {
 					executingCustomer = customer;
+					currentNq2--;
 					Nq2Avg[currentRound]--;
+					currentNs2++;
 					Ns2Avg[currentRound]++;
 				}
 			}
@@ -424,7 +444,9 @@ class QueueSystem {
 					return (index % (nPoints/10)) === 0 ? value : null;
 				}
 			},
-			
+			axisY: {
+				low: 0,
+			},
 			lineSmooth: Chartist.Interpolation.cardinal({
 				tension: 0
 			}),
