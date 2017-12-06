@@ -83,6 +83,8 @@ class QueueSystem {
 		let nq2PerTime = [];
 		let w2PerTime  = [];
 
+		let nPoints = 200; // Quantos pontos serão coletados para o gráfico
+
 		// Loop da simulação é executado até nCustomers terem saído do sistema
 		while (nServiceEnd2 < nCustomers * nRounds) {
 			// Gerando tempo percorrido até a próxima chegada no sistema
@@ -221,39 +223,42 @@ class QueueSystem {
 			nextCustomerId++; // Incrementando ID a ser utilizado na criação de fregueses
 
 			/* 
-				A cada 100 iterações, adiciona o rho atual na lista e renderiza o chart.
-				Não tá otimizado ainda.
+				A cada <interval> iterações, adiciona as médias atuais nas listas.
 			*/
-			if (nextCustomerId % 100 === 0) {
+			let interval = parseInt((nCustomers + nTransient) / nPoints, 10);
+
+			if (nextCustomerId % interval === 0) {
 				let totalId = (nextCustomerId + nTransient);
 
 				let totalNs1 = Ns1Avg[-1] + Ns1Avg[0];
-				ns1PerTime.push(totalNs1 / totalId);
-				this.renderChart(nTransient, totalId / 100, ns1PerTime, '#chartNs1');
-
 				let totalNq1 = Nq1Avg[-1] + Nq1Avg[0];
-				nq1PerTime.push(totalNq1 / totalId);
-				this.renderChart(nTransient, totalId / 100, nq1PerTime, '#chartNq1');
-
-				let totalW1 = W1Avg[-1] + W1Avg[0];
-				w1PerTime.push(totalW1 / totalId);
-				this.renderChart(nTransient, totalId / 100, w1PerTime, '#chartW1');
-
+				let totalW1  = W1Avg[-1] + W1Avg[0];
 				let totalNs2 = Ns2Avg[-1] + Ns2Avg[0];
-				ns2PerTime.push(totalNs2 / totalId);
-				this.renderChart(nTransient, totalId / 100, ns2PerTime, '#chartNs2');
-
 				let totalNq2 = Nq2Avg[-1] + Nq2Avg[0];
-				nq2PerTime.push(totalNq2 / totalId);
-				this.renderChart(nTransient, totalId / 100, nq2PerTime, '#chartNq2');
+				let totalW2  = W2Avg[-1] + W2Avg[0];
 
-				let totalW2 = W2Avg[-1] + W2Avg[0];
-				w2PerTime.push(totalW2 / totalId);
-				this.renderChart(nTransient, totalId / 100, w2PerTime, '#chartW2');
+				ns1PerTime.push(totalNs1 / totalId);
+				nq1PerTime.push(totalNq1 / totalId);
+				 w1PerTime.push(totalW1  / totalId);
+				ns2PerTime.push(totalNs2 / totalId);
+				nq2PerTime.push(totalNq2 / totalId);
+				 w2PerTime.push(totalW2  / totalId);
 			}
 
 
 		}
+
+		let totalId = (nextCustomerId + nTransient);
+
+		// Desenhando gráficos só ao final
+		this.renderChart(nTransient, totalId, ns1PerTime, nPoints, '#chartNs1');
+		this.renderChart(nTransient, totalId, nq1PerTime, nPoints, '#chartNq1');
+		this.renderChart(nTransient, totalId, w1PerTime,  nPoints, '#chartW1');
+		this.renderChart(nTransient, totalId, ns2PerTime, nPoints, '#chartNs2');
+		this.renderChart(nTransient, totalId, nq2PerTime, nPoints, '#chartNq2');
+		this.renderChart(nTransient, totalId, w2PerTime,  nPoints, '#chartW2');
+
+
 		/*
 			Com o final da execução da simulação, é hora de pegar todas as Esperanças coletadas e fazer suas médias.
 			Para isso basta dividi-las pelo número de consumidores que passaram pelo sistema.
@@ -385,14 +390,27 @@ class QueueSystem {
 
 	}
 
-	// Método que renderiza um gráfico em função do mundo de fregueses.
-	renderChart(nTransient, nCustomers, dataPerTime, chartId){
-		let labelArray = [nCustomers];
-		for (let i = 0; i < nCustomers; i++) {
-			labelArray[i] = i*100;
-		};
 
-		const transientValues = dataPerTime.slice(0,nTransient/100 + 1);
+	//this.renderChart(nTransient, totalId, w2PerTime, '#chartW2');
+
+	// Método que renderiza um gráfico em função do mundo de fregueses.
+	/*
+		nTransient - número de pessoas na fase transiente
+		nTotal - número total de pessoas, incluindo fase transiente
+		dataPerTime - dados coletados a cada <intervalo> iterações
+		chartId - id do elemento onde será desenhado o gráfico
+	*/
+	renderChart(nTransient, nTotal, dataPerTime, nPoints, chartId){
+
+		let labelArray = [];
+		let interval = parseInt(nTotal / nPoints, 10); // De quantos em quantos clientes os dados foram coletados
+		for (let i = 0; i < nPoints; i++) {
+			labelArray[i] = i*interval;
+		}
+		console.log(labelArray);
+		
+
+		const transientValues = dataPerTime.slice(0, nTransient/interval + 1);
 
 		const dataRhoChart = {
 				labels: labelArray,
@@ -400,18 +418,20 @@ class QueueSystem {
 		};
 
 		const optionsRhoChart = {
+			
 			axisX: {
 				labelInterpolationFnc: function skipLabels(value, index) {
-					return (index % 10) === 0 ? value : null;
+					return (index % (nPoints/10)) === 0 ? value : null;
 				}
 			},
+			
 			lineSmooth: Chartist.Interpolation.cardinal({
 				tension: 0
 			}),
 			height: 200,
 			chartPadding: { top: 30, right: 5, bottom: 0, left: 0},
 			showPoint: false,
-		}
+		};
 
 		let rhoChart = new Chartist.Line(chartId, dataRhoChart, optionsRhoChart);
 	}

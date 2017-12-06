@@ -6,10 +6,10 @@ function addFormListener(){
 	$("#runForm").submit((e)=>{
 		e.preventDefault();
 		// Valores defaults dos parametros
-		let nCustomers = parseInt($("#nCustomersField").val()) || 10000;
-		let nTransient = parseInt($("#nTransient").val()) || 3000;
-		let nRounds = parseInt($("#nRoundsField").val()) || 1;
-		let rho = parseFloat($("#rhoField").val()) || 0.4;
+		let nCustomers = parseInt($("#nCustomersField").val());
+		let nTransient = parseInt($("#nTransient").val());
+		let nRounds = parseInt($("#nRoundsField").val());
+		let rho = parseFloat($("#rhoField").val());
 		if (nTransient >= 0 && nCustomers > 0 && nRounds > 0 && rho > 0){
 			QueueSystem1.runSimulation(nTransient, nCustomers, nRounds, rho);
 		} else {
@@ -35,6 +35,11 @@ function renderNotification(from, align){
 }
 
 addFormListener();
+
+$("#nCustomersField").val("20000");
+$("#nTransient").val("5000");
+$("#nRoundsField").val("1");
+$("#rhoField").val("0.4");
 
 // // Roda a simulação com rho 0.4
 // QueueSystem1.runSimulation(100, 10, 0.4);
