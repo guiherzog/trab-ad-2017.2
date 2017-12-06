@@ -94,10 +94,25 @@ class QueueSystem {
 		let currentNq2;
 		let currentW2;
 
+		// Usar valores determinísticos no lugar dos gerados aleatoriamente
+		let deterministic = true;
+
+		// Definindo valores determinísticos
+		Utils.setDeterministicArrivals([1, 2]);
+		Utils.setDeterministicX1s([1, 10]);
+		Utils.setDeterministicX2s([3, 2]);
+
+
 		// Loop da simulação é executado até nCustomers terem saído do sistema
 		while (nServiceEnd2 < nCustomers * nRounds) {
 			// Gerando tempo percorrido até a próxima chegada no sistema
-			let time = Utils.getRandomExp(lambda);
+			let time;
+			if(deterministic)
+				time = Utils.getDeterministicArrival();
+			else
+				time = Utils.getRandomExp(lambda);
+
+
 			// Após gerar este tempo, o mesmo é adicionado ao tempo total da simulação
 			currentTime += time;
 			/*
@@ -196,8 +211,19 @@ class QueueSystem {
 				currentRound = Math.floor(nextCustomerId / nCustomers);
 
 			// Criação dos tempos de execução X1 e X2 para o próximo freguês
-			let service1Time = Utils.getRandomExp(mi);
-			let service2Time = Utils.getRandomExp(mi);
+			let service1Time;
+			let service2Time;
+
+			if(deterministic)
+				service1Time = Utils.getDeterministicX1();
+			else
+				service1Time = Utils.getRandomExp(mi);
+
+			if(deterministic)
+				service2Time = Utils.getDeterministicX2();
+			else
+				service2Time = Utils.getRandomExp(mi);
+
 			// Ambos tempos precisam ser adicionados no cálculo da esperança de X1 e X2
 			X1Avg[currentRound] += service1Time;
 			X2Avg[currentRound] += service2Time;
@@ -318,12 +344,21 @@ class QueueSystem {
 			meanRows +=`
  				<tr>
  					<td>${i + 1}</td>
- 					<td>${W1Avg[i].toFixed(5)} </td>
  					<td>${Nq1Avg[i].toFixed(5)}</td>
- 					<td>${(W2Avg[i]+X2Avg[i]).toFixed(5)}</td>
- 					<td>${(Nq2Avg[i]+Ns2Avg[i]).toFixed(5)}</td>
- 					<td>${W2Avg[i].toFixed(5)}</td>
+ 					<td>${Ns1Avg[i].toFixed(5)}</td>
+ 					<td>${N1Avg.toFixed(5)}</td>
+
+ 					<td>${W1Avg[i].toFixed(5)}</td>
+ 					<td>${X1Avg[i].toFixed(5)}</td>
+ 					<td>${T1Avg.toFixed(5)}</td>
+
  					<td>${Nq2Avg[i].toFixed(5)}</td>
+ 					<td>${Ns2Avg[i].toFixed(5)}</td>
+ 					<td>${N2Avg.toFixed(5)}</td>
+
+ 					<td>${W2Avg[i].toFixed(5)}</td>
+ 					<td>${X2Avg[i].toFixed(5)}</td>
+ 					<td>${T2Avg.toFixed(5)}</td>
  				</tr>
 			`;
 
@@ -376,12 +411,23 @@ class QueueSystem {
 		meanRows +=`
 			<tr>
 				<td><strong>Total</strong></td>
-				<td><strong>${W1AvgSim.toFixed(5)}</strong></td>
+				
 				<td><strong>${Nq1AvgSim.toFixed(5)}</strong></td>
-				<td><strong>${(W2AvgSim+X2AvgSim).toFixed(5)}</strong></td>
-				<td><strong>${(Nq2AvgSim+Ns2AvgSim).toFixed(5)}</strong></td>
-				<td><strong>${W2AvgSim.toFixed(5)}</strong></td>
+				<td><strong>${Ns1AvgSim.toFixed(5)}</strong></td>
+				<td><strong>${N1AvgSim.toFixed(5)}</strong></td>
+
+				<td><strong>${W1AvgSim.toFixed(5)}</strong></td>
+				<td><strong>${X1AvgSim.toFixed(5)}</strong></td>
+				<td><strong>${T1AvgSim.toFixed(5)}</strong></td>
+
+
 				<td><strong>${Nq2AvgSim.toFixed(5)}</strong></td>
+				<td><strong>${Ns2AvgSim.toFixed(5)}</strong></td>
+				<td><strong>${N2AvgSim.toFixed(5)}</strong></td>
+
+				<td><strong>${W2AvgSim.toFixed(5)}</strong></td>
+				<td><strong>${X2AvgSim.toFixed(5)}</strong></td>
+				<td><strong>${T2AvgSim.toFixed(5)}</strong></td>
 			</tr>
 		`;
 

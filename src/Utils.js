@@ -14,12 +14,50 @@ const seedrandom = require('seedrandom');
 */
 const randomSeed = seedrandom('test');
 
+let deterministicArrivals;
+let deterministicX1;
+let deterministicX2;
+
 class Utils {
 	// Gera um tempo de serviço exponencial e independente de outros.
 	static getRandomExp(rate){
 		return - Math.log(1 - randomSeed()) / rate;
-		//return 1/rate; // determinístico
 	}
+
+	static getDeterministicArrival() {
+		if(deterministicArrivals.length > 0)
+			return deterministicArrivals.shift();
+		else
+			return 100;
+	}
+
+	static getDeterministicX1() {
+		if(deterministicX1.length > 0)
+			return deterministicX1.shift();
+		else
+			return 1;
+	}
+
+	static getDeterministicX2() {
+		if(deterministicX2.length > 0)
+			return deterministicX2.shift();
+		else
+			return 1;
+	}
+
+
+	static setDeterministicArrivals(v) {
+		deterministicArrivals = v;
+	}
+	static setDeterministicX1s(v) {
+		deterministicX1 = v;
+	}
+	static setDeterministicX2s(v) {
+		deterministicX2 = v;
+	}
+
+
+
 }
 
 exports.Utils = Utils;
