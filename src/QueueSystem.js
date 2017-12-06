@@ -467,7 +467,7 @@ class QueueSystem {
 			X1Variance  = Math.pow(X1Avg[i] - X1AvgSim, 2);
 			T1Variance  = Math.pow(T1Avg[i] - T1AvgSim, 2);
 
-			Nq1Variance = Math.pow(Nq2Avg[i] - Nq2AvgSim, 2);
+			Nq2Variance = Math.pow(Nq2Avg[i] - Nq2AvgSim, 2);
 			Ns2Variance = Math.pow(Ns2Avg[i] - Ns2AvgSim, 2);
 			N2Variance  = Math.pow(N2Avg[i] - N2AvgSim, 2);
 			W2Variance  = Math.pow(W2Avg[i] - W2AvgSim, 2);
