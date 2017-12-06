@@ -95,7 +95,7 @@ class QueueSystem {
 		let currentW2;
 
 		// Usar valores determinísticos no lugar dos gerados aleatoriamente
-		let deterministic = true;
+		let deterministic = false;
 
 		// Definindo valores determinísticos
 		Utils.setDeterministicArrivals([1, 2]);
@@ -312,7 +312,7 @@ class QueueSystem {
 			a Esperança do número de pessoas de cada fila, além da Esperança de tempo total de cada fila.
 		*/
 
-		// Inicialização das Esperanças de todas as rodadas juntas
+		// Inicialização das Esperanças de todas as rodadas juntas (média das amostras)
 		let Ns1AvgSim = 0;
 		let Nq1AvgSim = 0;
 		let Ns2AvgSim = 0;
@@ -325,20 +325,25 @@ class QueueSystem {
 		document.getElementById("meanList").innerHTML = "";
 		let meanRows = ``;
 
-		// Exibição das Esperanças por rodada
+		let N1Avg = [];
+		let T1Avg = [];
+		let N2Avg = [];
+		let T2Avg = [];
+
+		// Exibição das Esperanças por rodada (media da rodada = amostra)
 		for (var i = 0; i < nRounds; i++) {
 			Nq1Avg[i] /= nCustomers;
 			Ns1Avg[i] /= nCustomers;
-			let N1Avg = Nq1Avg[i] + Ns1Avg[i];
+			N1Avg[i] = Nq1Avg[i] + Ns1Avg[i];
 			W1Avg[i] /= nCustomers;
 			X1Avg[i] /= nCustomers;
-			let T1Avg = W1Avg[i] + X1Avg[i];
+			T1Avg[i] = W1Avg[i] + X1Avg[i];
 			Nq2Avg[i] /= nCustomers;
 			Ns2Avg[i] /= nCustomers;
-			let N2Avg = Nq2Avg[i] + Ns2Avg[i];
+			N2Avg[i] = Nq2Avg[i] + Ns2Avg[i];
 			W2Avg[i] /= nCustomers;
 			X2Avg[i] /= nCustomers;
-			let T2Avg = W2Avg[i] + X2Avg[i];
+			T2Avg[i] = W2Avg[i] + X2Avg[i];
 
 			// Renderiza tabela de esperanças de cada rodada
 			meanRows +=`
@@ -346,19 +351,19 @@ class QueueSystem {
  					<td>${i + 1}</td>
  					<td>${Nq1Avg[i].toFixed(5)}</td>
  					<td>${Ns1Avg[i].toFixed(5)}</td>
- 					<td>${N1Avg.toFixed(5)}</td>
+ 					<td>${N1Avg[i].toFixed(5)}</td>
 
  					<td>${W1Avg[i].toFixed(5)}</td>
  					<td>${X1Avg[i].toFixed(5)}</td>
- 					<td>${T1Avg.toFixed(5)}</td>
+ 					<td>${T1Avg[i].toFixed(5)}</td>
 
  					<td>${Nq2Avg[i].toFixed(5)}</td>
  					<td>${Ns2Avg[i].toFixed(5)}</td>
- 					<td>${N2Avg.toFixed(5)}</td>
+ 					<td>${N2Avg[i].toFixed(5)}</td>
 
  					<td>${W2Avg[i].toFixed(5)}</td>
  					<td>${X2Avg[i].toFixed(5)}</td>
- 					<td>${T2Avg.toFixed(5)}</td>
+ 					<td>${T2Avg[i].toFixed(5)}</td>
  				</tr>
 			`;
 
@@ -393,7 +398,7 @@ class QueueSystem {
 			X2AvgSim += X2Avg[i];
 		}
 
-		// Cálculo e Exibição das Esperanças de todas as rodadas juntas
+		// Cálculo e Exibição das Esperanças de todas as rodadas juntas (média das amostras)
 		Nq1AvgSim /= nRounds;
 		Ns1AvgSim /= nRounds;
 		let N1AvgSim = Nq1AvgSim + Ns1AvgSim;
@@ -407,10 +412,10 @@ class QueueSystem {
 		X2AvgSim /= nRounds;
 		let T2AvgSim = W2AvgSim + X2AvgSim;
 
-		// Renderiza tabela de esperanças total
+		// Renderiza tabela de média das esperanças
 		meanRows +=`
 			<tr>
-				<td><strong>Total</strong></td>
+				<td><strong>Média</strong></td>
 				
 				<td><strong>${Nq1AvgSim.toFixed(5)}</strong></td>
 				<td><strong>${Ns1AvgSim.toFixed(5)}</strong></td>
@@ -433,7 +438,114 @@ class QueueSystem {
 
 		// Renderiza tabela de esperanças.
 		document.getElementById("meanList").innerHTML = meanRows;
-		
+
+
+
+		let Nq1Variance = 0;
+		let Ns1Variance = 0;
+		let N1Variance = 0;
+		let W1Variance = 0;
+		let X1Variance = 0;
+		let T1Variance = 0;
+
+		let Nq2Variance = 0;
+		let Ns2Variance = 0;
+		let N2Variance = 0;
+		let W2Variance = 0;
+		let X2Variance = 0;
+		let T2Variance = 0;
+
+
+		// Cálculo da variância das médias das rodadas (amostras)
+		// Variancia = (1/(n-1)) * somatório, para todas as amostras, de (amostra - media das amostras)^2
+		// (amostra = média da rodada)
+		for (var i = 0; i < nRounds; i++) {
+			Nq1Variance = Math.pow(Nq1Avg[i] - Nq1AvgSim, 2);
+			Ns1Variance = Math.pow(Ns1Avg[i] - Ns1AvgSim, 2);
+			N1Variance  = Math.pow(N1Avg[i] - N1AvgSim, 2);
+			W1Variance  = Math.pow(W1Avg[i] - W1AvgSim, 2);
+			X1Variance  = Math.pow(X1Avg[i] - X1AvgSim, 2);
+			T1Variance  = Math.pow(T1Avg[i] - T1AvgSim, 2);
+
+			Nq1Variance = Math.pow(Nq2Avg[i] - Nq2AvgSim, 2);
+			Ns2Variance = Math.pow(Ns2Avg[i] - Ns2AvgSim, 2);
+			N2Variance  = Math.pow(N2Avg[i] - N2AvgSim, 2);
+			W2Variance  = Math.pow(W2Avg[i] - W2AvgSim, 2);
+			X2Variance  = Math.pow(X2Avg[i] - X2AvgSim, 2);
+			T2Variance  = Math.pow(T2Avg[i] - T2AvgSim, 2);
+
+		}
+		Nq1Variance /= nCustomers - 1;
+		Ns1Variance /= nCustomers - 1;
+		N1Variance  /= nCustomers - 1;
+		W1Variance  /= nCustomers - 1;
+		X1Variance  /= nCustomers - 1;
+		T1Variance  /= nCustomers - 1;
+
+		Nq2Variance /= nCustomers - 1;
+		Ns2Variance /= nCustomers - 1;
+		N2Variance  /= nCustomers - 1;
+		W2Variance  /= nCustomers - 1;
+		X2Variance  /= nCustomers - 1;
+		T2Variance  /= nCustomers - 1;
+
+
+		// Calculando o desvio padrão das médias das rodadas (amostras)
+		let Nq1StdDev = Math.sqrt(Nq1Variance);
+		let Ns1StdDev = Math.sqrt(Ns1Variance);
+		let N1StdDev  = Math.sqrt(N1Variance);
+		let W1StdDev  = Math.sqrt(W1Variance);
+		let X1StdDev  = Math.sqrt(X1Variance);
+		let T1StdDev  = Math.sqrt(T1Variance);
+
+		let Nq2StdDev = Math.sqrt(Nq2Variance);
+		let Ns2StdDev = Math.sqrt(Ns2Variance);
+		let N2StdDev  = Math.sqrt(N2Variance);
+		let W2StdDev  = Math.sqrt(W2Variance);
+		let X2StdDev  = Math.sqrt(X2Variance);
+		let T2StdDev  = Math.sqrt(T2Variance);
+
+
+		/*
+			Calculando intervalo de confiança de 95% usando a t-Student
+
+			Para um grau de liberdade muito grande, a t-Student se aproxima da normal unitária
+			P(Z <= 1.96) = 0.975 (1 - 0.05/2)
+			(Z é N(0,1))
+		*/
+		let sqrtNCustomers = Math.sqrt(nCustomers);
+
+		let Nq1CI = 1.96 * Nq1StdDev / sqrtNCustomers;
+		let Ns1CI = 1.96 * Ns1StdDev / sqrtNCustomers;
+		let N1CI  = 1.96 * N1StdDev  / sqrtNCustomers;
+		let W1CI  = 1.96 * W1StdDev  / sqrtNCustomers;
+		let X1CI  = 1.96 * X1StdDev  / sqrtNCustomers;
+		let T1CI  = 1.96 * T1StdDev  / sqrtNCustomers;
+
+		let Nq2CI = 1.96 * Nq2StdDev / sqrtNCustomers;
+		let Ns2CI = 1.96 * Ns2StdDev / sqrtNCustomers;
+		let N2CI  = 1.96 * N2StdDev  / sqrtNCustomers;
+		let W2CI  = 1.96 * W2StdDev  / sqrtNCustomers;
+		let X2CI  = 1.96 * X2StdDev  / sqrtNCustomers;
+		let T2CI  = 1.96 * T2StdDev  / sqrtNCustomers;
+
+
+		document.getElementById("ciNq1").innerHTML = Nq1AvgSim.toFixed(5) + " &plusmn; " + Nq1CI.toFixed(15);
+		document.getElementById("ciNs1").innerHTML = Ns1AvgSim.toFixed(5) + " &plusmn; " + Ns1CI.toFixed(15);
+		document.getElementById("ciN1").innerHTML  = N1AvgSim.toFixed(5)  + " &plusmn; " + N1CI.toFixed(15);
+		document.getElementById("ciW1").innerHTML  = W1AvgSim.toFixed(5)  + " &plusmn; " + W1CI.toFixed(15);
+		document.getElementById("ciX1").innerHTML  = X1AvgSim.toFixed(5)  + " &plusmn; " + X1CI.toFixed(15);
+		document.getElementById("ciT1").innerHTML  = T1AvgSim.toFixed(5)  + " &plusmn; " + T1CI.toFixed(15);
+
+		document.getElementById("ciNq2").innerHTML = Nq2AvgSim.toFixed(5) + " &plusmn; " + Nq2CI.toFixed(15);
+		document.getElementById("ciNs2").innerHTML = Ns2AvgSim.toFixed(5) + " &plusmn; " + Ns2CI.toFixed(15);
+		document.getElementById("ciN2").innerHTML  = N2AvgSim.toFixed(5)  + " &plusmn; " + N2CI.toFixed(15);
+		document.getElementById("ciW2").innerHTML  = W2AvgSim.toFixed(5)  + " &plusmn; " + W2CI.toFixed(15);
+		document.getElementById("ciX2").innerHTML  = X2AvgSim.toFixed(5)  + " &plusmn; " + X2CI.toFixed(15);
+		document.getElementById("ciT2").innerHTML  = T2AvgSim.toFixed(5)  + " &plusmn; " + T2CI.toFixed(15);
+
+
+
 		// console.log(`
 		// 	Valores médios gerais da Simulação:
 
@@ -473,8 +585,6 @@ class QueueSystem {
 		for (let i = 0; i < nPoints; i++) {
 			labelArray[i] = i*interval;
 		}
-		console.log(labelArray);
-		
 
 		const transientValues = dataPerTime.slice(0, nTransient/interval + 1);
 
