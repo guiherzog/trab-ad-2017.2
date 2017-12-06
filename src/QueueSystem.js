@@ -460,19 +460,19 @@ class QueueSystem {
 		// Variancia = (1/(n-1)) * somatório, para todas as amostras, de (amostra - media das amostras)^2
 		// (amostra = média da rodada)
 		for (var i = 0; i < nRounds; i++) {
-			Nq1Variance = Math.pow(Nq1Avg[i] - Nq1AvgSim, 2);
-			Ns1Variance = Math.pow(Ns1Avg[i] - Ns1AvgSim, 2);
-			N1Variance  = Math.pow(N1Avg[i] - N1AvgSim, 2);
-			W1Variance  = Math.pow(W1Avg[i] - W1AvgSim, 2);
-			X1Variance  = Math.pow(X1Avg[i] - X1AvgSim, 2);
-			T1Variance  = Math.pow(T1Avg[i] - T1AvgSim, 2);
+			Nq1Variance += Math.pow(Nq1Avg[i] - Nq1AvgSim, 2);
+			Ns1Variance += Math.pow(Ns1Avg[i] - Ns1AvgSim, 2);
+			N1Variance  += Math.pow(N1Avg[i] - N1AvgSim, 2);
+			W1Variance  += Math.pow(W1Avg[i] - W1AvgSim, 2);
+			X1Variance  += Math.pow(X1Avg[i] - X1AvgSim, 2);
+			T1Variance  += Math.pow(T1Avg[i] - T1AvgSim, 2);
 
-			Nq2Variance = Math.pow(Nq2Avg[i] - Nq2AvgSim, 2);
-			Ns2Variance = Math.pow(Ns2Avg[i] - Ns2AvgSim, 2);
-			N2Variance  = Math.pow(N2Avg[i] - N2AvgSim, 2);
-			W2Variance  = Math.pow(W2Avg[i] - W2AvgSim, 2);
-			X2Variance  = Math.pow(X2Avg[i] - X2AvgSim, 2);
-			T2Variance  = Math.pow(T2Avg[i] - T2AvgSim, 2);
+			Nq2Variance += Math.pow(Nq2Avg[i] - Nq2AvgSim, 2);
+			Ns2Variance += Math.pow(Ns2Avg[i] - Ns2AvgSim, 2);
+			N2Variance  += Math.pow(N2Avg[i] - N2AvgSim, 2);
+			W2Variance  += Math.pow(W2Avg[i] - W2AvgSim, 2);
+			X2Variance  += Math.pow(X2Avg[i] - X2AvgSim, 2);
+			T2Variance  += Math.pow(T2Avg[i] - T2AvgSim, 2);
 
 		}
 		Nq1Variance /= nCustomers - 1;
