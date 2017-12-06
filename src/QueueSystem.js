@@ -513,21 +513,21 @@ class QueueSystem {
 			P(Z <= 1.96) = 0.975 (1 - 0.05/2)
 			(Z é N(0,1))
 		*/
-		let sqrtNCustomers = Math.sqrt(nCustomers);
+		let sqrtNRounds = Math.sqrt(nRounds);
 
-		let Nq1CI = 1.96 * Nq1StdDev / sqrtNCustomers;
-		let Ns1CI = 1.96 * Ns1StdDev / sqrtNCustomers;
-		let N1CI  = 1.96 * N1StdDev  / sqrtNCustomers;
-		let W1CI  = 1.96 * W1StdDev  / sqrtNCustomers;
-		let X1CI  = 1.96 * X1StdDev  / sqrtNCustomers;
-		let T1CI  = 1.96 * T1StdDev  / sqrtNCustomers;
+		let Nq1CI = 1.96 * Nq1StdDev / sqrtNRounds;
+		let Ns1CI = 1.96 * Ns1StdDev / sqrtNRounds;
+		let N1CI  = 1.96 * N1StdDev  / sqrtNRounds;
+		let W1CI  = 1.96 * W1StdDev  / sqrtNRounds;
+		let X1CI  = 1.96 * X1StdDev  / sqrtNRounds;
+		let T1CI  = 1.96 * T1StdDev  / sqrtNRounds;
 
-		let Nq2CI = 1.96 * Nq2StdDev / sqrtNCustomers;
-		let Ns2CI = 1.96 * Ns2StdDev / sqrtNCustomers;
-		let N2CI  = 1.96 * N2StdDev  / sqrtNCustomers;
-		let W2CI  = 1.96 * W2StdDev  / sqrtNCustomers;
-		let X2CI  = 1.96 * X2StdDev  / sqrtNCustomers;
-		let T2CI  = 1.96 * T2StdDev  / sqrtNCustomers;
+		let Nq2CI = 1.96 * Nq2StdDev / sqrtNRounds;
+		let Ns2CI = 1.96 * Ns2StdDev / sqrtNRounds;
+		let N2CI  = 1.96 * N2StdDev  / sqrtNRounds;
+		let W2CI  = 1.96 * W2StdDev  / sqrtNRounds;
+		let X2CI  = 1.96 * X2StdDev  / sqrtNRounds;
+		let T2CI  = 1.96 * T2StdDev  / sqrtNRounds;
 
 
 		document.getElementById("ciNq1").innerHTML = Nq1AvgSim.toFixed(5) + " &plusmn; " + Nq1CI.toFixed(15);
