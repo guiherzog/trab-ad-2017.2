@@ -19,7 +19,8 @@ function addFormListener(){
 		}
 
 		if (nTransient >= 0 && nCustomers > 0 && nRounds > 0 && rho > 0){
-			QueueSystem1.runSimulation(nTransient, nCustomers, nRounds, rho);
+			renderRunningNotification('top', 'center');
+			setTimeout(()=>QueueSystem1.runSimulation(nTransient, nCustomers, nRounds, rho),3000)
 		} else {
 			renderNotification('top', 'center');
 		}
@@ -27,6 +28,20 @@ function addFormListener(){
 	})
 }
 
+// Alerta o usuário que a simulação está sendo executada.
+function renderRunningNotification(from, align){
+	$.notify({
+		icon: "play_arrow",
+		message: "Executando simulação. Aguarde por favor..."
+	},{
+		type: 'success',
+		timer: 100,
+		placement: {
+			from: from,
+			align: align
+		}
+	});
+}
 // Alerta o usuário caso ele deixe de preencher algum campo ou deixe-o menor que 0
 function renderNotification(from, align){
 	$.notify({
