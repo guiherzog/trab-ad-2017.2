@@ -20,7 +20,7 @@ function addFormListener(){
 
 		if (nTransient >= 0 && nCustomers > 0 && nRounds > 0 && rho > 0){
 			renderRunningNotification('top', 'center');
-			setTimeout(()=>QueueSystem1.runSimulation(nTransient, nCustomers, nRounds, rho),3000)
+			setTimeout(()=>QueueSystem1.runSimulation(nTransient, nCustomers, nRounds, rho), 100)
 		} else {
 			renderNotification('top', 'center');
 		}
@@ -36,6 +36,10 @@ function renderRunningNotification(from, align){
 	},{
 		type: 'success',
 		timer: 100,
+		animate: {
+			enter: 'animated rollIn',
+			exit: 'animated rollOut'
+		},
 		placement: {
 			from: from,
 			align: align
@@ -49,7 +53,7 @@ function renderNotification(from, align){
 		message: "Todos os campos são obrigatórios e precisam ser maiores que ZERO."
 	},{
 		type: 'danger',
-		timer: 2000,
+		timer: 100,
 		placement: {
 			from: from,
 			align: align

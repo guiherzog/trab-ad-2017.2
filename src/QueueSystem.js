@@ -22,6 +22,7 @@ class QueueSystem {
 		this.runRounds(nTransient, nCustomers, nRounds, lambda, mi);
 		let endTime = new Date().getTime();
 
+		$.notifyClose();
 		document.getElementById("simTitle").innerHTML = 
 			"Simulação finalizada em "+((endTime -  startTime)/1000)+" segundos";
 	}
