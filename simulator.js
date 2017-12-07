@@ -10,6 +10,14 @@ function addFormListener(){
 		let nTransient = parseInt($("#nTransient").val());
 		let nRounds = parseInt($("#nRoundsField").val());
 		let rho = parseFloat($("#rhoField").val());
+
+		if($("#nTransient").val() === "") {
+			     if(rho < 0.4) nTransient = 10000;
+			else if(rho < 0.6) nTransient = 15000;
+			else if(rho < 0.8) nTransient = 30000;
+			else               nTransient = 50000;
+		}
+
 		if (nTransient >= 0 && nCustomers > 0 && nRounds > 0 && rho > 0){
 			QueueSystem1.runSimulation(nTransient, nCustomers, nRounds, rho);
 		} else {
@@ -37,7 +45,6 @@ function renderNotification(from, align){
 addFormListener();
 
 $("#nCustomersField").val("2000");
-$("#nTransient").val("5000");
 $("#nRoundsField").val("30");
 $("#rhoField").val("0.4");
 
