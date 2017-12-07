@@ -58,6 +58,10 @@ class QueueSystem {
 		let X1Avg = new Array(nRounds).fill(0);
 		let X2Avg = new Array(nRounds).fill(0);
 
+		// W1 e W2 de cada freguês de cada rodada. W1[i][j] = W1 do freguês j da rodada i
+		let W1 = [];
+		let W2 = [];
+
 		// Índice -1 é um "round" reservado para a fase transiente
 		Ns1Avg[-1] = 0;
 		Nq1Avg[-1] = 0;
@@ -151,6 +155,9 @@ class QueueSystem {
 							que é diminuído do momento de chegada do freguês na fila 1 (que é o momento de chegada no sistema).
 						*/
 						currentW1 = ((currentTime - time) - executingCustomer.arrival1) - executingCustomer.X1;
+						if(W1[executingCustomerRound] === undefined)
+							W1[executingCustomerRound] = [];
+						W1[executingCustomerRound].push(currentW1);
 						W1Avg[executingCustomerRound] += currentW1;
 						queue1.shift(); // Shift() é uma função de array que remove seu primeiro elemento, e atualiza os índices de todos os elementos.
 						executingCustomer.priority = 2;
@@ -167,6 +174,9 @@ class QueueSystem {
 					*/
 					else {
 						currentW2 = ((currentTime - time) - executingCustomer.arrival2) - executingCustomer.X2;
+						if(W2[executingCustomerRound] === undefined)
+							W2[executingCustomerRound] = [];
+						W2[executingCustomerRound].push(currentW2);
 						W2Avg[executingCustomerRound] += currentW2;
 						queue2.shift(); // Shift() é uma função de array que remove seu primeiro elemento, e atualiza os índices de todos os elementos.
 						// Apenas considerando fregueses que saíram e que não fazem parte do período transiente.
@@ -330,8 +340,14 @@ class QueueSystem {
 		let N2Avg = [];
 		let T2Avg = [];
 
+		let W1VariancePerRound = [];
+		let W2VariancePerRound = [];
+
+		let W1VariancePerRoundSim = 0;
+		let W2VariancePerRoundSim = 0;
+
 		// Exibição das Esperanças por rodada (media da rodada = amostra)
-		for (var i = 0; i < nRounds; i++) {
+		for (let i = 0; i < nRounds; i++) {
 			Nq1Avg[i] /= nCustomers;
 			Ns1Avg[i] /= nCustomers;
 			N1Avg[i] = Nq1Avg[i] + Ns1Avg[i];
@@ -344,6 +360,17 @@ class QueueSystem {
 			W2Avg[i] /= nCustomers;
 			X2Avg[i] /= nCustomers;
 			T2Avg[i] = W2Avg[i] + X2Avg[i];
+
+			W1VariancePerRound[i] = 0;
+			W2VariancePerRound[i] = 0;
+			for(let j = 0; j < W1.length; j++) {
+				W1VariancePerRound[i] += Math.pow(W1[i][j] - W1Avg[i], 2);
+				W2VariancePerRound[i] += Math.pow(W2[i][j] - W2Avg[i], 2);
+			}
+
+			W1VariancePerRound[i] /= W1.length - 1;
+			W2VariancePerRound[i] /= W2.length - 1;
+
 
 			// Renderiza tabela de esperanças de cada rodada
 			meanRows +=`
@@ -364,6 +391,9 @@ class QueueSystem {
  					<td>${W2Avg[i].toFixed(5)}</td>
  					<td>${X2Avg[i].toFixed(5)}</td>
  					<td>${T2Avg[i].toFixed(5)}</td>
+
+ 					<td>${W1VariancePerRound[i].toFixed(5)}</td>
+ 					<td>${W2VariancePerRound[i].toFixed(5)}</td>
  				</tr>
 			`;
 
@@ -396,6 +426,9 @@ class QueueSystem {
 			W2AvgSim += W2Avg[i];
 			X1AvgSim += X1Avg[i];
 			X2AvgSim += X2Avg[i];
+
+			W1VariancePerRoundSim += W1VariancePerRound[i];
+			W2VariancePerRoundSim += W2VariancePerRound[i];
 		}
 
 		// Cálculo e Exibição das Esperanças de todas as rodadas juntas (média das amostras)
@@ -411,6 +444,9 @@ class QueueSystem {
 		W2AvgSim /= nRounds;
 		X2AvgSim /= nRounds;
 		let T2AvgSim = W2AvgSim + X2AvgSim;
+
+		W1VariancePerRoundSim /= nRounds;
+		W2VariancePerRoundSim /= nRounds;
 
 		// Renderiza tabela de média das esperanças
 		meanRows +=`
@@ -433,6 +469,9 @@ class QueueSystem {
 				<td><strong>${W2AvgSim.toFixed(5)}</strong></td>
 				<td><strong>${X2AvgSim.toFixed(5)}</strong></td>
 				<td><strong>${T2AvgSim.toFixed(5)}</strong></td>
+
+				<td><strong>${W1VariancePerRoundSim.toFixed(5)}</strong></td>
+				<td><strong>${W2VariancePerRoundSim.toFixed(5)}</strong></td>
 			</tr>
 		`;
 
@@ -455,6 +494,9 @@ class QueueSystem {
 		let X2Variance = 0;
 		let T2Variance = 0;
 
+		let W1VarianceVariance = 0;
+		let W2VarianceVariance = 0;
+
 
 		// Cálculo da variância das médias das rodadas (amostras)
 		// Variancia = (1/(n-1)) * somatório, para todas as amostras, de (amostra - media das amostras)^2
@@ -474,6 +516,9 @@ class QueueSystem {
 			X2Variance  += Math.pow(X2Avg[i] - X2AvgSim, 2);
 			T2Variance  += Math.pow(T2Avg[i] - T2AvgSim, 2);
 
+			W1VarianceVariance += Math.pow(W1VariancePerRound[i] - W1VariancePerRoundSim, 2);
+			W2VarianceVariance += Math.pow(W2VariancePerRound[i] - W2VariancePerRoundSim, 2);
+
 		}
 		Nq1Variance /= nRounds - 1;
 		Ns1Variance /= nRounds - 1;
@@ -488,6 +533,9 @@ class QueueSystem {
 		W2Variance  /= nRounds - 1;
 		X2Variance  /= nRounds - 1;
 		T2Variance  /= nRounds - 1;
+
+		W1VarianceVariance /= nRounds - 1;
+		W2VarianceVariance /= nRounds - 1;
 
 
 		// Calculando o desvio padrão das médias das rodadas (amostras)
@@ -504,6 +552,9 @@ class QueueSystem {
 		let W2StdDev  = Math.sqrt(W2Variance);
 		let X2StdDev  = Math.sqrt(X2Variance);
 		let T2StdDev  = Math.sqrt(T2Variance);
+
+		let W1VarianceStdDev = Math.sqrt(W1VarianceVariance);
+		let W2VarianceStdDev = Math.sqrt(W2VarianceVariance);
 
 
 		/*
@@ -528,6 +579,9 @@ class QueueSystem {
 		let W2CI  = 1.96 * W2StdDev  / sqrtNRounds;
 		let X2CI  = 1.96 * X2StdDev  / sqrtNRounds;
 		let T2CI  = 1.96 * T2StdDev  / sqrtNRounds;
+
+		let W1VarCI  = 1.96 * W1VarianceStdDev  / sqrtNRounds;
+		let W2VarCI  = 1.96 * W2VarianceStdDev  / sqrtNRounds;
 		
 
 
@@ -545,6 +599,9 @@ class QueueSystem {
 		document.getElementById("ciX2").innerHTML  = "Entre <b>" + (X2AvgSim - X2CI).toFixed(5) + "</b> e <b>" + (X2AvgSim + X2CI).toFixed(5) + "</b>";
 		document.getElementById("ciT2").innerHTML  = "Entre <b>" + (T2AvgSim - T2CI).toFixed(5) + "</b> e <b>" + (T2AvgSim + T2CI).toFixed(5) + "</b>";
 
+		document.getElementById("ciW1VarT").innerHTML  = "Entre <b>" + (W1VariancePerRoundSim - W1VarCI).toFixed(5) + "</b> e <b>" + (W1VariancePerRoundSim + W1VarCI).toFixed(5) + "</b>";
+		document.getElementById("ciW2VarT").innerHTML  = "Entre <b>" + (W2VariancePerRoundSim - W2VarCI).toFixed(5) + "</b> e <b>" + (W2VariancePerRoundSim + W2VarCI).toFixed(5) + "</b>";
+
 
 		document.getElementById("ciNq1").innerHTML += " (" + Nq1AvgSim.toFixed(5) + " &plusmn; " + Nq1CI.toFixed(15) + ")";
 		document.getElementById("ciNs1").innerHTML += " (" + Ns1AvgSim.toFixed(5) + " &plusmn; " + Ns1CI.toFixed(15) + ")";
@@ -560,6 +617,9 @@ class QueueSystem {
 		document.getElementById("ciX2").innerHTML  += " (" + X2AvgSim.toFixed(5)  + " &plusmn; " + X2CI.toFixed(15) + ")";
 		document.getElementById("ciT2").innerHTML  += " (" + T2AvgSim.toFixed(5)  + " &plusmn; " + T2CI.toFixed(15) + ")";
 
+		document.getElementById("ciW1VarT").innerHTML  += " (" + W1VariancePerRoundSim.toFixed(5)  + " &plusmn; " + W1VarCI.toFixed(15) + ")";
+		document.getElementById("ciW2VarT").innerHTML  += " (" + W2VariancePerRoundSim.toFixed(5)  + " &plusmn; " + W2VarCI.toFixed(15) + ")";
+
 
 
 		let alpha = 0.05;
@@ -569,8 +629,8 @@ class QueueSystem {
 		let W2chi2Lower = (nRounds - 1) * W2Variance / Utils.getInverseChiSquaredCDF(1 - alpha/2, nRounds - 1);
 		let W2chi2Upper = (nRounds - 1) * W2Variance / Utils.getInverseChiSquaredCDF(alpha/2,     nRounds - 1);
 
-		document.getElementById("ciVW1").innerHTML = "Entre <b>" + W1chi2Lower.toFixed(5) + "</b> e <b>" + W1chi2Upper.toFixed(5) + "</b>";
-		document.getElementById("ciVW2").innerHTML = "Entre <b>" + W2chi2Lower.toFixed(5) + "</b> e <b>" + W2chi2Upper.toFixed(5) + "</b>";
+		document.getElementById("ciW1VarC").innerHTML = "Entre <b>" + W1chi2Lower.toFixed(5) + "</b> e <b>" + W1chi2Upper.toFixed(5) + "</b>";
+		document.getElementById("ciW2VarC").innerHTML = "Entre <b>" + W2chi2Lower.toFixed(5) + "</b> e <b>" + W2chi2Upper.toFixed(5) + "</b>";
 
 
 		// console.log(`

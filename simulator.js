@@ -36,9 +36,9 @@ function renderNotification(from, align){
 
 addFormListener();
 
-$("#nCustomersField").val("20000");
+$("#nCustomersField").val("2000");
 $("#nTransient").val("5000");
-$("#nRoundsField").val("1");
+$("#nRoundsField").val("30");
 $("#rhoField").val("0.4");
 
 // // Roda a simulação com rho 0.4

@@ -145,6 +145,9 @@
 										<th>E[W2]</th>
 										<th>E[X2]</th>
 										<th>E[T2]</th>
+
+										<th>V[W1]</th>
+										<th>V[W2]</th>
 									</thead>
 									<tbody id="meanList"></tbody>
 								</table>
@@ -156,7 +159,7 @@
 						<div class="card">
 							<div class="card-header" data-background-color="green">
 								<h4 class="title">Intervalo de confiança de 95%</h4>
-								<p class="category">Com nível de confiança de 95% o valor verdadeiro estará no intervalo abaixo. Usando a t-Student para as médias, e chi-squared para as variâncias.</p>
+								<p class="category">Com nível de confiança de 95% o valor verdadeiro estará no intervalo abaixo.</p>
 							</div>
 							<div class="card-content table-responsive">
 								<table class="table table-hover">
@@ -180,8 +183,11 @@
 										<tr><td>E[X2]</td><td id="ciX2"></td><td></td></tr>
 										<tr><td>E[T2]</td><td id="ciT2"></td><td></td></tr>
 
-										<tr><td>V[W1]</td><td id="ciVW1"></td><td></td></tr>
-										<tr><td>V[W2]</td><td id="ciVW2"></td><td></td></tr>
+										<tr><td>V[W1] com chi-squared</td><td id="ciW1VarC"></td><td></td></tr>
+										<tr><td>V[W2] com chi-squared</td><td id="ciW2VarC"></td><td></td></tr>
+
+										<tr><td>V[W1] com t-Student</td><td id="ciW1VarT"></td><td></td></tr>
+										<tr><td>V[W2] com t-Student</td><td id="ciW2VarT"></td><td></td></tr>
 									</tbody>
 								</table>
 							</div>
