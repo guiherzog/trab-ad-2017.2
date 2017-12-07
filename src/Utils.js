@@ -2,6 +2,8 @@
 	Classe responsável por forneces funções auxiliares e genéricas.
 */
 const seedrandom = require('seedrandom');
+const chi2inv = require('inv-chisquare-cdf');
+
 /*
 	Seeds úteis (testes com 2 fregueses):
 		123456: fregues 2 chega durante serviço 1 do fregues 1.
@@ -56,7 +58,9 @@ class Utils {
 		deterministicX2 = v;
 	}
 
-
+	static getInverseChiSquaredCDF(probability, degreeOfFreedom) {
+		return chi2inv.invChiSquareCDF(probability, degreeOfFreedom);
+	}
 
 }
 

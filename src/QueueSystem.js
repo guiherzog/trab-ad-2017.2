@@ -528,9 +528,6 @@ class QueueSystem {
 		let W2CI  = 1.96 * W2StdDev  / sqrtNRounds;
 		let X2CI  = 1.96 * X2StdDev  / sqrtNRounds;
 		let T2CI  = 1.96 * T2StdDev  / sqrtNRounds;
-
-
-
 		
 
 
@@ -549,7 +546,6 @@ class QueueSystem {
 		document.getElementById("ciT2").innerHTML  = "Entre <b>" + (T2AvgSim - T2CI).toFixed(5) + "</b> e <b>" + (T2AvgSim + T2CI).toFixed(5) + "</b>";
 
 
-
 		document.getElementById("ciNq1").innerHTML += " (" + Nq1AvgSim.toFixed(5) + " &plusmn; " + Nq1CI.toFixed(15) + ")";
 		document.getElementById("ciNs1").innerHTML += " (" + Ns1AvgSim.toFixed(5) + " &plusmn; " + Ns1CI.toFixed(15) + ")";
 		document.getElementById("ciN1").innerHTML  += " (" + N1AvgSim.toFixed(5)  + " &plusmn; " + N1CI.toFixed(15) + ")";
@@ -564,6 +560,17 @@ class QueueSystem {
 		document.getElementById("ciX2").innerHTML  += " (" + X2AvgSim.toFixed(5)  + " &plusmn; " + X2CI.toFixed(15) + ")";
 		document.getElementById("ciT2").innerHTML  += " (" + T2AvgSim.toFixed(5)  + " &plusmn; " + T2CI.toFixed(15) + ")";
 
+
+
+		let alpha = 0.05;
+		let W1chi2Lower = (nRounds - 1) * W1Variance / Utils.getInverseChiSquaredCDF(1 - alpha/2, nRounds - 1);
+		let W1chi2Upper = (nRounds - 1) * W1Variance / Utils.getInverseChiSquaredCDF(alpha/2,     nRounds - 1);
+
+		let W2chi2Lower = (nRounds - 1) * W2Variance / Utils.getInverseChiSquaredCDF(1 - alpha/2, nRounds - 1);
+		let W2chi2Upper = (nRounds - 1) * W2Variance / Utils.getInverseChiSquaredCDF(alpha/2,     nRounds - 1);
+
+		document.getElementById("ciVW1").innerHTML = "Entre <b>" + W1chi2Lower.toFixed(5) + "</b> e <b>" + W1chi2Upper.toFixed(5) + "</b>";
+		document.getElementById("ciVW2").innerHTML = "Entre <b>" + W2chi2Lower.toFixed(5) + "</b> e <b>" + W2chi2Upper.toFixed(5) + "</b>";
 
 
 		// console.log(`

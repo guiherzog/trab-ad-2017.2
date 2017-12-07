@@ -155,29 +155,33 @@
 					<div class="col-lg-12 col-md-12 col-sm-12">
 						<div class="card">
 							<div class="card-header" data-background-color="green">
-								<h4 class="title">Intervalo de confiança de 95% usando a t-Student</h4>
-								<p class="category">Com nível de confiança de 95% a média verdadeira estará no intervalo abaixo.</p>
+								<h4 class="title">Intervalo de confiança de 95%</h4>
+								<p class="category">Com nível de confiança de 95% o valor verdadeiro estará no intervalo abaixo. Usando a t-Student para as médias, e chi-squared para as variâncias.</p>
 							</div>
 							<div class="card-content table-responsive">
 								<table class="table table-hover">
 									<thead class="text-warning">
 										<th>Parâmetro</th>
 										<th>Intervalo</th>
+										<th>Precisão</th>
 									</thead>
 									<tbody id="meanList">
-										<tr><td>E[Nq1]</td><td id="ciNq1"></td></tr>
-										<tr><td>E[Ns1]</td><td id="ciNs1"></td></tr>
-										<tr><td>E[N1]</td><td id="ciN1"></td></tr>
-										<tr><td>E[W1]</td><td id="ciW1"></td></tr>
-										<tr><td>E[X1]</td><td id="ciX1"></td></tr>
-										<tr><td>E[T1]</td><td id="ciT1"></td></tr>
+										<tr><td>E[Nq1]</td><td id="ciNq1"></td><td></td></tr>
+										<tr><td>E[Ns1]</td><td id="ciNs1"></td><td></td></tr>
+										<tr><td>E[N1]</td><td id="ciN1"></td><td></td></tr>
+										<tr><td>E[W1]</td><td id="ciW1"></td><td></td></tr>
+										<tr><td>E[X1]</td><td id="ciX1"></td><td></td></tr>
+										<tr><td>E[T1]</td><td id="ciT1"></td><td></td></tr>
 
-										<tr><td>E[Nq2]</td><td id="ciNq2"></td></tr>
-										<tr><td>E[Ns2]</td><td id="ciNs2"></td></tr>
-										<tr><td>E[N2]</td><td id="ciN2"></td></tr>
-										<tr><td>E[W2]</td><td id="ciW2"></td></tr>
-										<tr><td>E[X2]</td><td id="ciX2"></td></tr>
-										<tr><td>E[T2]</td><td id="ciT2"></td></tr>
+										<tr><td>E[Nq2]</td><td id="ciNq2"></td><td></td></tr>
+										<tr><td>E[Ns2]</td><td id="ciNs2"></td><td></td></tr>
+										<tr><td>E[N2]</td><td id="ciN2"></td><td></td></tr>
+										<tr><td>E[W2]</td><td id="ciW2"></td><td></td></tr>
+										<tr><td>E[X2]</td><td id="ciX2"></td><td></td></tr>
+										<tr><td>E[T2]</td><td id="ciT2"></td><td></td></tr>
+
+										<tr><td>V[W1]</td><td id="ciVW1"></td><td></td></tr>
+										<tr><td>V[W2]</td><td id="ciVW2"></td><td></td></tr>
 									</tbody>
 								</table>
 							</div>

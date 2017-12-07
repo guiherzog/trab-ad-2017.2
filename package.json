@@ -19,6 +19,7 @@
     "electron": "~1.6.2"
   },
   "dependencies": {
+    "inv-chisquare-cdf": "^1.0.0",
     "seedrandom": "^2.4.3"
   }
 }
