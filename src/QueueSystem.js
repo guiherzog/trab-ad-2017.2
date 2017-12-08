@@ -620,17 +620,71 @@ class QueueSystem {
 		document.getElementById("ciW1VarT").innerHTML  += " (" + W1VariancePerRoundSim.toFixed(5)  + " &plusmn; " + W1VarCI.toFixed(15) + ")";
 		document.getElementById("ciW2VarT").innerHTML  += " (" + W2VariancePerRoundSim.toFixed(5)  + " &plusmn; " + W2VarCI.toFixed(15) + ")";
 
+		
+		// Precisão dos intervalos de confiança calculados com a t-Student
 
+		let Nq1CIPrecision = Nq1CI / Nq1AvgSim;
+		let Ns1CIPrecision = Ns1CI / Ns1AvgSim;
+		let N1CIPrecision = N1CI / N1AvgSim;
+		let W1CIPrecision = W1CI / W1AvgSim;
+		let X1CIPrecision = X1CI / X1AvgSim;
+		let T1CIPrecision = T1CI / T1AvgSim;
+
+		let Nq2CIPrecision = Nq2CI / Nq2AvgSim;
+		let Ns2CIPrecision = Ns2CI / Ns2AvgSim;
+		let N2CIPrecision = N2CI / N2AvgSim;
+		let W2CIPrecision = W2CI / W2AvgSim;
+		let X2CIPrecision = X2CI / X2AvgSim;
+		let T2CIPrecision = T2CI / T2AvgSim;
+
+		let W1VarCIPrecision = W1VarCI / W1VariancePerRoundSim;
+		let W2VarCIPrecision = W2VarCI / W2VariancePerRoundSim;
+
+
+		document.getElementById("ciNq1precision").innerHTML = (Nq1CIPrecision*100).toFixed(1) + "%";
+		document.getElementById("ciNs1precision").innerHTML = (Ns1CIPrecision*100).toFixed(1) + "%";
+		document.getElementById("ciN1precision").innerHTML = (N1CIPrecision*100).toFixed(1) + "%";
+		document.getElementById("ciW1precision").innerHTML = (W1CIPrecision*100).toFixed(1) + "%";
+		document.getElementById("ciX1precision").innerHTML = (X1CIPrecision*100).toFixed(1) + "%";
+		document.getElementById("ciT1precision").innerHTML = (T1CIPrecision*100).toFixed(1) + "%";
+
+		document.getElementById("ciNq2precision").innerHTML = (Nq2CIPrecision*100).toFixed(1) + "%";
+		document.getElementById("ciNs2precision").innerHTML = (Ns2CIPrecision*100).toFixed(1) + "%";
+		document.getElementById("ciN2precision").innerHTML = (N2CIPrecision*100).toFixed(1) + "%";
+		document.getElementById("ciW2precision").innerHTML = (W2CIPrecision*100).toFixed(1) + "%";
+		document.getElementById("ciX2precision").innerHTML = (X2CIPrecision*100).toFixed(1) + "%";
+		document.getElementById("ciT2precision").innerHTML = (T2CIPrecision*100).toFixed(1) + "%";
+
+		document.getElementById("ciW1VarTprecision").innerHTML = (W1VarCIPrecision*100).toFixed(1) + "%";
+		document.getElementById("ciW2VarTprecision").innerHTML = (W2VarCIPrecision*100).toFixed(1) + "%";
+
+
+
+
+		// Intervalo de confiança de V[W1] e V[W2] usando chi-squared
 
 		let alpha = 0.05;
-		let W1chi2Lower = (nRounds - 1) * W1Variance / Utils.getInverseChiSquaredCDF(1 - alpha/2, nRounds - 1);
-		let W1chi2Upper = (nRounds - 1) * W1Variance / Utils.getInverseChiSquaredCDF(alpha/2,     nRounds - 1);
 
-		let W2chi2Lower = (nRounds - 1) * W2Variance / Utils.getInverseChiSquaredCDF(1 - alpha/2, nRounds - 1);
-		let W2chi2Upper = (nRounds - 1) * W2Variance / Utils.getInverseChiSquaredCDF(alpha/2,     nRounds - 1);
+		let chi2Low = Utils.getInverseChiSquaredCDF(1 - alpha/2, nRounds - 1);
+		let chi2Up  = Utils.getInverseChiSquaredCDF(alpha/2,     nRounds - 1);
+
+		let W1chi2Lower = (nRounds - 1) * W1VariancePerRoundSim / chi2Low;
+		let W1chi2Upper = (nRounds - 1) * W1VariancePerRoundSim / chi2Up;
+
+		let W2chi2Lower = (nRounds - 1) * W2VariancePerRoundSim / chi2Low;
+		let W2chi2Upper = (nRounds - 1) * W2VariancePerRoundSim / chi2Up;
 
 		document.getElementById("ciW1VarC").innerHTML = "Entre <b>" + W1chi2Lower.toFixed(5) + "</b> e <b>" + W1chi2Upper.toFixed(5) + "</b>";
 		document.getElementById("ciW2VarC").innerHTML = "Entre <b>" + W2chi2Lower.toFixed(5) + "</b> e <b>" + W2chi2Upper.toFixed(5) + "</b>";
+
+
+		// Precisão dos ICs calculados com a chi-squared
+
+		let chi2Precision = (chi2Low - chi2Up) / (chi2Low + chi2Up);
+
+		document.getElementById("ciW1VarCprecision").innerHTML = (chi2Precision*100).toFixed(1) + "%";;
+		document.getElementById("ciW2VarCprecision").innerHTML = (chi2Precision*100).toFixed(1) + "%";;
+
 
 
 		// console.log(`
