@@ -1,4 +1,3 @@
-const { Queue } = require('./Queue');
 const { Customer } = require('./Customer');
 const { Utils } = require('./Utils');
 const { Event } = require('./Event');
