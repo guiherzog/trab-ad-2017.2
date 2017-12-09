@@ -14,7 +14,7 @@ const chi2inv = require('inv-chisquare-cdf');
 		123456: fregues i+1 chega durante serviço 1 do fregues i (sem interrupções).
 		'test': fregues 1 é interrompido 2x.
 */
-const randomSeed = seedrandom('test');
+const randomSeed = seedrandom();
 
 let deterministicArrivals;
 let deterministicX1;
