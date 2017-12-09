@@ -373,29 +373,32 @@ class QueueSystem {
 
 
 			// Renderiza tabela de esperanças de cada rodada
-			meanRows +=`
- 				<tr>
- 					<td>${i + 1}</td>
- 					<td>${Nq1Avg[i].toFixed(5)}</td>
- 					<td>${Ns1Avg[i].toFixed(5)}</td>
- 					<td>${N1Avg[i].toFixed(5)}</td>
+			if (nRounds < 100 ||
+			   (nRounds > 100 && (i % 10 == 0))){			
+				meanRows +=`
+	 				<tr>
+	 					<td>${i + 1}</td>
+	 					<td>${Nq1Avg[i].toFixed(5)}</td>
+	 					<td>${Ns1Avg[i].toFixed(5)}</td>
+	 					<td>${N1Avg[i].toFixed(5)}</td>
 
- 					<td>${W1Avg[i].toFixed(5)}</td>
- 					<td>${X1Avg[i].toFixed(5)}</td>
- 					<td>${T1Avg[i].toFixed(5)}</td>
+	 					<td>${W1Avg[i].toFixed(5)}</td>
+	 					<td>${X1Avg[i].toFixed(5)}</td>
+	 					<td>${T1Avg[i].toFixed(5)}</td>
 
- 					<td>${Nq2Avg[i].toFixed(5)}</td>
- 					<td>${Ns2Avg[i].toFixed(5)}</td>
- 					<td>${N2Avg[i].toFixed(5)}</td>
+	 					<td>${Nq2Avg[i].toFixed(5)}</td>
+	 					<td>${Ns2Avg[i].toFixed(5)}</td>
+	 					<td>${N2Avg[i].toFixed(5)}</td>
 
- 					<td>${W2Avg[i].toFixed(5)}</td>
- 					<td>${X2Avg[i].toFixed(5)}</td>
- 					<td>${T2Avg[i].toFixed(5)}</td>
+	 					<td>${W2Avg[i].toFixed(5)}</td>
+	 					<td>${X2Avg[i].toFixed(5)}</td>
+	 					<td>${T2Avg[i].toFixed(5)}</td>
 
- 					<td>${W1VariancePerRound[i].toFixed(5)}</td>
- 					<td>${W2VariancePerRound[i].toFixed(5)}</td>
- 				</tr>
-			`;
+	 					<td>${W1VariancePerRound[i].toFixed(5)}</td>
+	 					<td>${W2VariancePerRound[i].toFixed(5)}</td>
+	 				</tr>
+				`;
+			}
 
 
 			// console.log(`
