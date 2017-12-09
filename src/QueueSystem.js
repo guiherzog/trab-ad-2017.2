@@ -322,6 +322,36 @@ class QueueSystem {
 			a Esperança do número de pessoas de cada fila, além da Esperança de tempo total de cada fila.
 		*/
 
+
+
+		// Calculando variância geral de todos os fregueses, sem separar por rounds
+		let W1AllRoundsAvg = 0;
+		let W2AllRoundsAvg = 0;
+
+		for (let i = 0; i < nRounds; i++) {
+			W1AllRoundsAvg += W1Avg[i];
+			W2AllRoundsAvg += W2Avg[i];
+		}
+
+		W1AllRoundsAvg /= nRounds * nCustomers;
+		W2AllRoundsAvg /= nRounds * nCustomers;
+
+
+		let W1AllRoundsVariance = 0;
+		let W2AllRoundsVariance = 0;
+
+		for(let i = 0; i < nRounds; i++) {
+			for(let j = 0; j < W1[i].length; j++) {
+				W1AllRoundsVariance += Math.pow(W1[i][j] - W1AllRoundsAvg, 2);
+				W2AllRoundsVariance += Math.pow(W2[i][j] - W2AllRoundsAvg, 2);
+			}
+		}
+
+		W1AllRoundsVariance /= nRounds * nCustomers;
+		W2AllRoundsVariance /= nRounds * nCustomers;
+
+
+
 		// Inicialização das Esperanças de todas as rodadas juntas (média das amostras)
 		let Ns1AvgSim = 0;
 		let Nq1AvgSim = 0;
@@ -663,20 +693,22 @@ class QueueSystem {
 		document.getElementById("ciW2VarTprecision").innerHTML = (W2VarCIPrecision*100).toFixed(1) + "%";
 
 
+		W1AllRoundsVariance /= nRounds * nCustomers;
+		W2AllRoundsVariance /= nRounds * nCustomers;
 
 
 		// Intervalo de confiança de V[W1] e V[W2] usando chi-squared
 
 		let alpha = 0.05;
 
-		let chi2Low = Utils.getInverseChiSquaredCDF(1 - alpha/2, nRounds - 1);
-		let chi2Up  = Utils.getInverseChiSquaredCDF(alpha/2,     nRounds - 1);
+		let chi2Low = Utils.getInverseChiSquaredCDF(1 - alpha/2, nRounds * nCustomers - 1);
+		let chi2Up  = Utils.getInverseChiSquaredCDF(alpha/2,     nRounds * nCustomers - 1);
 
-		let W1chi2Lower = (nRounds - 1) * W1VariancePerRoundSim / chi2Low;
-		let W1chi2Upper = (nRounds - 1) * W1VariancePerRoundSim / chi2Up;
+		let W1chi2Lower = (nRounds * nCustomers - 1) * W1AllRoundsVariance / chi2Low;
+		let W1chi2Upper = (nRounds * nCustomers - 1) * W1AllRoundsVariance / chi2Up;
 
-		let W2chi2Lower = (nRounds - 1) * W2VariancePerRoundSim / chi2Low;
-		let W2chi2Upper = (nRounds - 1) * W2VariancePerRoundSim / chi2Up;
+		let W2chi2Lower = (nRounds * nCustomers - 1) * W2AllRoundsVariance / chi2Low;
+		let W2chi2Upper = (nRounds * nCustomers - 1) * W2AllRoundsVariance / chi2Up;
 
 		document.getElementById("ciW1VarC").innerHTML = "Entre <b>" + W1chi2Lower.toFixed(5) + "</b> e <b>" + W1chi2Upper.toFixed(5) + "</b>";
 		document.getElementById("ciW2VarC").innerHTML = "Entre <b>" + W2chi2Lower.toFixed(5) + "</b> e <b>" + W2chi2Upper.toFixed(5) + "</b>";
