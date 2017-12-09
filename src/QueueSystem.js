@@ -325,6 +325,7 @@ class QueueSystem {
 
 
 		// Calculando variância geral de todos os fregueses, sem separar por rounds
+		/*
 		let W1AllRoundsAvg = 0;
 		let W2AllRoundsAvg = 0;
 
@@ -349,6 +350,7 @@ class QueueSystem {
 
 		W1AllRoundsVariance /= nRounds * nCustomers;
 		W2AllRoundsVariance /= nRounds * nCustomers;
+		*/
 
 
 
@@ -693,8 +695,8 @@ class QueueSystem {
 		document.getElementById("ciW2VarTprecision").innerHTML = (W2VarCIPrecision*100).toFixed(1) + "%";
 
 
-		W1AllRoundsVariance /= nRounds * nCustomers;
-		W2AllRoundsVariance /= nRounds * nCustomers;
+		//W1AllRoundsVariance /= nRounds * nCustomers;
+		//W2AllRoundsVariance /= nRounds * nCustomers;
 
 
 		// Intervalo de confiança de V[W1] e V[W2] usando chi-squared
