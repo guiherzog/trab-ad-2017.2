@@ -45,7 +45,7 @@ class QueueSystem {
 	*/
 	runRounds(nTransient, nCustomers, nRounds, lambda, mi) {
 		// Inicialização de estruturas de dados para representar as filas e eventos
-		let events = [];
+		//let events = [];
 		let queue1 = [];
 		let queue2 = [];
 		// Inicialização de variáveis p/ calcular esperanças
@@ -141,7 +141,7 @@ class QueueSystem {
 					time -= executingCustomer.remainingTime;
 					executingCustomer.remainingTime = 0;
 					// Criação de evento de fim de serviço
-					events.push(new Event(currentTime - time, executingCustomer.id + customerIndexStartsFrom, EventType.SERVICE_END, executingCustomer.priority));
+					//events.push(new Event(currentTime - time, executingCustomer.id + customerIndexStartsFrom, EventType.SERVICE_END, executingCustomer.priority));
 					/*
 						Se o freguês que acabou de executar era da fila 1, é necessário atualiza-lo para ir para a fila 2.
 						Antes de atualiza-lo, a Esperança do tempo de espera da fila 1 é atualizada, e o freguês é removido da fila 1.
@@ -164,7 +164,7 @@ class QueueSystem {
 						executingCustomer.arrival2 = currentTime - time;
 						executingCustomer.remainingTime = executingCustomer.X2;
 						queue2.push(executingCustomer);
-						events.push(new Event(currentTime - time, executingCustomer.id + customerIndexStartsFrom, EventType.SYSTEM_ARRIVAL, 2));
+						//events.push(new Event(currentTime - time, executingCustomer.id + customerIndexStartsFrom, EventType.SYSTEM_ARRIVAL, 2));
 					}
 					/*
 						No caso onde o freguês que terminou execução era da fila 2, o procedimento é mais simples,
@@ -254,7 +254,7 @@ class QueueSystem {
 
 			// Freguês é adicionado na fila 1 (já que é a única fila com chegadas externas), e é criado um evento para sua chegada.
 			queue1.push(customer);
-			events.push(new Event(currentTime, customer.id + customerIndexStartsFrom, EventType.SYSTEM_ARRIVAL, 1));
+			//events.push(new Event(currentTime, customer.id + customerIndexStartsFrom, EventType.SYSTEM_ARRIVAL, 1));
 			// Se não existe ninguém executando, o freguês que chegou vai diretamente ao servidor.
 			if (executingCustomer == null){
 				executingCustomer = customer;
