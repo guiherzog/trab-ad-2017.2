@@ -699,16 +699,18 @@ class QueueSystem {
 
 		// Intervalo de confiança de V[W1] e V[W2] usando chi-squared
 
+		// É usada como variância a média da variância de todos os rounds, e n = número de fregueses em um round.
+
 		let alpha = 0.05;
 
-		let chi2Low = Utils.getInverseChiSquaredCDF(1 - alpha/2, nRounds * nCustomers - 1);
-		let chi2Up  = Utils.getInverseChiSquaredCDF(alpha/2,     nRounds * nCustomers - 1);
+		let chi2Low = Utils.getInverseChiSquaredCDF(1 - alpha/2, nCustomers - 1);
+		let chi2Up  = Utils.getInverseChiSquaredCDF(alpha/2,     nCustomers - 1);
 
-		let W1chi2Lower = (nRounds * nCustomers - 1) * W1AllRoundsVariance / chi2Low;
-		let W1chi2Upper = (nRounds * nCustomers - 1) * W1AllRoundsVariance / chi2Up;
+		let W1chi2Lower = (nCustomers - 1) * W1VariancePerRoundSim / chi2Low;
+		let W1chi2Upper = (nCustomers - 1) * W1VariancePerRoundSim / chi2Up;
 
-		let W2chi2Lower = (nRounds * nCustomers - 1) * W2AllRoundsVariance / chi2Low;
-		let W2chi2Upper = (nRounds * nCustomers - 1) * W2AllRoundsVariance / chi2Up;
+		let W2chi2Lower = (nCustomers - 1) * W2VariancePerRoundSim / chi2Low;
+		let W2chi2Upper = (nCustomers - 1) * W2VariancePerRoundSim / chi2Up;
 
 		document.getElementById("ciW1VarC").innerHTML = "Entre <b>" + W1chi2Lower.toFixed(5) + "</b> e <b>" + W1chi2Upper.toFixed(5) + "</b>";
 		document.getElementById("ciW2VarC").innerHTML = "Entre <b>" + W2chi2Lower.toFixed(5) + "</b> e <b>" + W2chi2Upper.toFixed(5) + "</b>";
