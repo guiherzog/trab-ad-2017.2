@@ -24,7 +24,7 @@
 						<div class="col-lg-12 col-md-12 col-sm-12">
 							<form id="runForm" class="navbar-form navbar-right" role="search">
 								<div class="form-group  is-empty">
-									<input id="nTransient" type="text" class="form-control" placeholder="Período Transiente">
+									<input id="nTransient" type="text" class="form-control" placeholder="Automático">
 									<span class="material-input"></span>
 									<br>Período Transiente
 								</div>
@@ -164,13 +164,13 @@
 					
 					<div class="col-lg-12 col-md-12 col-sm-12">
 						<div class="card">
-							<div class="card-header" data-background-color="orange">
+							<div class="card-header" data-background-color="purple">
 								<h4 class="title">Métricas das filas em cada rodada</h4>
-								<p class="category">No máximo <strong>100 rodadas</strong> serão exibidas. Caso o número de rounds seja maior que 100, a tabela pulará rounds intercaladamente.</p>
+								<p class="category">No máximo <strong>100 linhas</strong> serão exibidas. Exemplo: caso 300 rodadas sejam executadas, a tabela pulará de <strong>3 em 3</strong> valores e mostrará as rodadas 1, 4, 7, e assim sucessivamente.</p>
 							</div>
 							<div class="card-content table-responsive">
 								<table class="table table-hover">
-									<thead class="text-warning">
+									<thead class="text-primary">
 										<th>Rodada</th>
 										<th>E[Nq1]</th>
 										<th>E[Ns1]</th>

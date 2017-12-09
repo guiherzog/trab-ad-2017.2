@@ -31,7 +31,7 @@ function addFormListener(){
 				renderNotification('top', 'center', "O Fator Mínimo (Periodo Transiente + Fregueses x Rodadas) não pode ser maior do que 70 milhões."), 200);
 		}
 
-		else if(nTransient < 0 || nCustomers <= 0 || nRounds <= 0 || rcho <= 0) {
+		else if(nTransient < 0 || nCustomers <= 0 || nRounds <= 0 || rho <= 0) {
 			renderNotification('top', 'center', "Todos os campos são obrigatórios e precisam ser maiores que ZERO.");
 		}
 
@@ -92,6 +92,6 @@ function renderNotification(from, align, msg){
 
 addFormListener();
 
-$("#nCustomersField").val("2000");
-$("#nRoundsField").val("30");
-$("#rhoField").val("0.4");
+$("#nCustomersField").val("5000");
+$("#nRoundsField").val("80");
+$("#rhoField").val("0.9");
