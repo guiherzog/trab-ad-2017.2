@@ -363,13 +363,14 @@ class QueueSystem {
 
 			W1VariancePerRound[i] = 0;
 			W2VariancePerRound[i] = 0;
-			for(let j = 0; j < W1.length; j++) {
+			for(let j = 0; j < W1[i].length; j++) {
+				//console.log("media = " + W2Avg[i].toFixed(5) + ", valor = " + W2[i][j].toFixed(15));
 				W1VariancePerRound[i] += Math.pow(W1[i][j] - W1Avg[i], 2);
 				W2VariancePerRound[i] += Math.pow(W2[i][j] - W2Avg[i], 2);
 			}
 
-			W1VariancePerRound[i] /= W1.length - 1;
-			W2VariancePerRound[i] /= W2.length - 1;
+			W1VariancePerRound[i] /= W1.length;
+			W2VariancePerRound[i] /= W2.length;
 
 
 			// Renderiza tabela de esperanças de cada rodada
