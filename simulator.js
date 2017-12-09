@@ -20,12 +20,28 @@ function addFormListener(){
 		}
 
 
-		if (nTransient >= 0 && nCustomers > 0 && nRounds > 0 && rho > 0){
-			renderRunningNotification('top', 'center');
-			setTimeout(()=>QueueSystem1.runSimulation(nTransient, nCustomers, nRounds, rho), 100)
-		} else {
+		// Erros
+		if(nCustomers > 25000000) {
+			setTimeout(()=>
+				renderNotification('top', 'center', "O número de fregueses por rodada não pode ser maior do que 25 milhões."), 200);
+		}
+
+		else if(nTransient + nCustomers*nRounds > 70000000) {
+			setTimeout(()=>
+				renderNotification('top', 'center', "O Fator Mínimo (Periodo Transiente + Fregueses x Rodadas) não pode ser maior do que 70 milhões."), 200);
+		}
+
+		else if(nTransient < 0 || nCustomers <= 0 || nRounds <= 0 || rcho <= 0) {
 			renderNotification('top', 'center', "Todos os campos são obrigatórios e precisam ser maiores que ZERO.");
 		}
+
+		// Sem erro
+		else {
+			renderRunningNotification('top', 'center');
+			setTimeout(()=>QueueSystem1.runSimulation(nTransient, nCustomers, nRounds, rho), 100)
+		}
+
+
 
 		if (nTransient + nCustomers*nRounds < 100)
 		{
