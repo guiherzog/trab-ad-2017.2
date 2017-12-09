@@ -404,8 +404,8 @@ class QueueSystem {
 
 
 			// Renderiza tabela de esperanças de cada rodada
-			if (nRounds < 100 ||
-			   (nRounds > 100 && (i % 10 == 0))){			
+			if (nRounds <= 100 ||
+			   (nRounds > 100 && (i % parseInt(0.01*nRounds) == 0))){			
 				meanRows +=`
 	 				<tr>
 	 					<td>${i + 1}</td>

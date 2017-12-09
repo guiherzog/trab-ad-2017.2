@@ -2,6 +2,7 @@ const { QueueSystem } = require('./src/QueueSystem');
 
 let QueueSystem1 = new QueueSystem();
 
+// Método responsável por gerenciar o form e executar a simulação ao clicar em play.
 function addFormListener(){
 	$("#runForm").submit((e)=>{
 		e.preventDefault();
@@ -18,13 +19,24 @@ function addFormListener(){
 			else               nTransient = 50000;
 		}
 
+
 		if (nTransient >= 0 && nCustomers > 0 && nRounds > 0 && rho > 0){
 			renderRunningNotification('top', 'center');
 			setTimeout(()=>QueueSystem1.runSimulation(nTransient, nCustomers, nRounds, rho), 100)
 		} else {
-			renderNotification('top', 'center');
+			renderNotification('top', 'center', "Todos os campos são obrigatórios e precisam ser maiores que ZERO.");
 		}
 
+		if (nTransient + nCustomers*nRounds < 100)
+		{
+			setTimeout(()=>
+				renderNotification('top', 'center', "O Fator Mínimo (Periodo Transiente + Fregueses x Rodadas) é muito pequeno, alguns valores não serão calculados corretamente."), 200);
+		}
+
+		if (nRounds == 1){
+			setTimeout(()=>
+				renderNotification('top', 'center', "Para calcular o IC é preciso no mínimo 2 rodadas. O IC não será calculado corretamente."), 200);
+		}
 	})
 }
 
@@ -46,11 +58,12 @@ function renderRunningNotification(from, align){
 		}
 	});
 }
+
 // Alerta o usuário caso ele deixe de preencher algum campo ou deixe-o menor que 0
-function renderNotification(from, align){
+function renderNotification(from, align, msg){
 	$.notify({
 		icon: "memory",
-		message: "Todos os campos são obrigatórios e precisam ser maiores que ZERO."
+		message: msg,
 	},{
 		type: 'danger',
 		timer: 100,
@@ -66,12 +79,3 @@ addFormListener();
 $("#nCustomersField").val("2000");
 $("#nRoundsField").val("30");
 $("#rhoField").val("0.4");
-
-// // Roda a simulação com rho 0.4
-// QueueSystem1.runSimulation(100, 10, 0.4);
-// // Roda a simulação com rho 0.6
-// QueueSystem1.runSimulation(100, 10, 0.6);
-// // Roda a simulação com rho 0.8
-// QueueSystem1.runSimulation(100, 10, 0.8);
-// // Roda a simulação com rho 0.9
-// QueueSystem1.runSimulation(100, 10, 0.9);
