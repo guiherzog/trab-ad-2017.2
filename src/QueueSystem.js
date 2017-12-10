@@ -502,7 +502,7 @@ class QueueSystem {
 		W2VariancePerRoundSim /= nRounds;
 
 		// Renderiza tabela de média das esperanças
-		meanRows +=`
+		meanRows = `
 			<tr>
 				<td><strong>Média</strong></td>
 				
@@ -526,12 +526,10 @@ class QueueSystem {
 				<td><strong>${W1VariancePerRoundSim.toFixed(5)}</strong></td>
 				<td><strong>${W2VariancePerRoundSim.toFixed(5)}</strong></td>
 			</tr>
-		`;
+		` + meanRows;
 
 		// Renderiza tabela de esperanças.
 		document.getElementById("meanList").innerHTML = meanRows;
-
-
 
 		let Nq1Variance = 0;
 		let Ns1Variance = 0;
