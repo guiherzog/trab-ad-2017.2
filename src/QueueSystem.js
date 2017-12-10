@@ -49,28 +49,36 @@ class QueueSystem {
 		let queue1 = [];
 		let queue2 = [];
 		// Inicialização de variáveis p/ calcular esperanças
-		let Ns1Avg = new Array(nRounds).fill(0);
 		let Nq1Avg = new Array(nRounds).fill(0);
-		let Ns2Avg = new Array(nRounds).fill(0);
+		let Ns1Avg = new Array(nRounds).fill(0);
+		let N1Avg = new Array(nRounds).fill(0);
 		let Nq2Avg = new Array(nRounds).fill(0);
+		let Ns2Avg = new Array(nRounds).fill(0);
+		let N2Avg = new Array(nRounds).fill(0);
 		let W1Avg = new Array(nRounds).fill(0);
-		let W2Avg = new Array(nRounds).fill(0);
 		let X1Avg = new Array(nRounds).fill(0);
+		let T1Avg = new Array(nRounds).fill(0);
+		let W2Avg = new Array(nRounds).fill(0);
 		let X2Avg = new Array(nRounds).fill(0);
+		let T2Avg = new Array(nRounds).fill(0);
 
 		// W1 e W2 de cada freguês de cada rodada. W1[i][j] = W1 do freguês j da rodada i
 		let W1 = [];
 		let W2 = [];
 
 		// Índice -1 é um "round" reservado para a fase transiente
-		Ns1Avg[-1] = 0;
 		Nq1Avg[-1] = 0;
-		Ns2Avg[-1] = 0;
+		Ns1Avg[-1] = 0;
+		N1Avg[-1] = 0;
 		Nq2Avg[-1] = 0;
+		Ns2Avg[-1] = 0;
+		N2Avg[-1] = 0;
 		W1Avg[-1] = 0;
-		W2Avg[-1] = 0;
 		X1Avg[-1] = 0;
+		T1Avg[-1] = 0;
+		W2Avg[-1] = 0;
 		X2Avg[-1] = 0;
+		T2Avg[-1] = 0;
 
 		let currentTime = 0; // Variável que representa o tempo atual da simulação.
 
@@ -159,6 +167,7 @@ class QueueSystem {
 							W1[executingCustomerRound] = [];
 						W1[executingCustomerRound].push(currentW1);
 						W1Avg[executingCustomerRound] += currentW1;
+						T1Avg[executingCustomerRound] += currentW1;
 						queue1.shift(); // Shift() é uma função de array que remove seu primeiro elemento, e atualiza os índices de todos os elementos.
 						executingCustomer.priority = 2;
 						executingCustomer.arrival2 = currentTime - time;
@@ -169,7 +178,7 @@ class QueueSystem {
 					/*
 						No caso onde o freguês que terminou execução era da fila 2, o procedimento é mais simples,
 						já que ele sairá do sistema sem passar por nenhuma outra fila.
-						Só precisamos atualizar a Esperança de W2, remover o freguês da fila 2
+						Só precisamos atualizar a Esperança de W2 e T2, remover o freguês da fila 2
 						e atualizar o número de fregueses que saíram do sistema.
 					*/
 					else {
@@ -178,6 +187,7 @@ class QueueSystem {
 							W2[executingCustomerRound] = [];
 						W2[executingCustomerRound].push(currentW2);
 						W2Avg[executingCustomerRound] += currentW2;
+						T2Avg[executingCustomerRound] += currentW2;
 						queue2.shift(); // Shift() é uma função de array que remove seu primeiro elemento, e atualiza os índices de todos os elementos.
 						// Apenas considerando fregueses que saíram e que não fazem parte do período transiente.
 						if (executingCustomer.id >= 0)
@@ -234,21 +244,25 @@ class QueueSystem {
 			else
 				service2Time = Utils.getRandomExp(mi);
 
-			// Ambos tempos precisam ser adicionados no cálculo da esperança de X1 e X2
+			// Ambos tempos precisam ser adicionados no cálculo da esperança de ambos Xs e Ts
 			X1Avg[currentRound] += service1Time;
+			T1Avg[currentRound] += service1Time;
 			X2Avg[currentRound] += service2Time;
+			T2Avg[currentRound] += service2Time;
 			let customer = new Customer(nextCustomerId, currentTime, service1Time, service2Time);
 			/*
-				No momento que um freguês chega, é necessário verificar o estado de ambas filas para atualizar a Esperança de Nq1 e Nq2.
+				No momento que um freguês chega, é necessário verificar o estado de ambas filas para atualizar a Esperança de ambos Nqs e Ns.
 				Para este cálculo, usamos o tamanho das filas 1 e 2. Apesar de isso parecer certo num primeiro momento, o código desta simulação
 				não remove um freguês de sua fila no momento em que ele passa a executar. Isso só acontece no instante em que ele termina seu tempo de execução
 				para aquela fila. Por conta disso, é necessário diminuir o valor de Nq1/Nq2 em 1 se alguém daquela fila estiver executando.
-				Este procedimento é executado um pouco mais abaixo.
+				Este procedimento é eexcutado um pouco mais abaixo.
 			*/
 			currentNq1 = queue1.length;
 			Nq1Avg[currentRound] += currentNq1;
+			N1Avg[currentRound] += currentNq1;
 			currentNq2 = queue2.length;
 			Nq2Avg[currentRound] += currentNq2;
+			N2Avg[currentRound] += currentNq2;
 
 			currentNs1 = currentNs2 = 0;
 
@@ -295,10 +309,10 @@ class QueueSystem {
 
 				ns1PerTime.push(totalNs1 / totalId);
 				nq1PerTime.push(totalNq1 / totalId);
-				 w1PerTime.push(totalW1  / totalId);
+			 	w1PerTime.push(totalW1  / totalId);
 				ns2PerTime.push(totalNs2 / totalId);
 				nq2PerTime.push(totalNq2 / totalId);
-				 w2PerTime.push(totalW2  / totalId);
+			 	w2PerTime.push(totalW2  / totalId);
 			}
 
 
@@ -355,22 +369,21 @@ class QueueSystem {
 
 
 		// Inicialização das Esperanças de todas as rodadas juntas (média das amostras)
-		let Ns1AvgSim = 0;
 		let Nq1AvgSim = 0;
-		let Ns2AvgSim = 0;
+		let Ns1AvgSim = 0;
+		let N1AvgSim = 0;
 		let Nq2AvgSim = 0;
+		let Ns2AvgSim = 0;
+		let N2AvgSim = 0;
 		let W1AvgSim = 0;
-		let W2AvgSim = 0;
 		let X1AvgSim = 0;
+		let T1AvgSim = 0;
+		let W2AvgSim = 0;
 		let X2AvgSim = 0;
+		let T2AvgSim = 0;
 
 		document.getElementById("meanList").innerHTML = "";
 		let meanRows = ``;
-
-		let N1Avg = [];
-		let T1Avg = [];
-		let N2Avg = [];
-		let T2Avg = [];
 
 		let W1VariancePerRound = [];
 		let W2VariancePerRound = [];
@@ -382,16 +395,16 @@ class QueueSystem {
 		for (let i = 0; i < nRounds; i++) {
 			Nq1Avg[i] /= nCustomers;
 			Ns1Avg[i] /= nCustomers;
-			N1Avg[i] = Nq1Avg[i] + Ns1Avg[i];
+			N1Avg[i] /= nCustomers;
 			W1Avg[i] /= nCustomers;
 			X1Avg[i] /= nCustomers;
-			T1Avg[i] = W1Avg[i] + X1Avg[i];
+			T1Avg[i] /= nCustomers;
 			Nq2Avg[i] /= nCustomers;
 			Ns2Avg[i] /= nCustomers;
-			N2Avg[i] = Nq2Avg[i] + Ns2Avg[i];
+			N2Avg[i] /= nCustomers;
 			W2Avg[i] /= nCustomers;
 			X2Avg[i] /= nCustomers;
-			T2Avg[i] = W2Avg[i] + X2Avg[i];
+			T2Avg[i] /= nCustomers;
 
 			W1VariancePerRound[i] = 0;
 			W2VariancePerRound[i] = 0;
@@ -454,14 +467,18 @@ class QueueSystem {
 			// 		T2 médio = ${T2Avg}
 			// `);
 
-			Ns1AvgSim += Ns1Avg[i];
 			Nq1AvgSim += Nq1Avg[i];
-			Ns2AvgSim += Ns2Avg[i];
+			Ns1AvgSim += Ns1Avg[i];
+			N1AvgSim += N1Avg[i];
 			Nq2AvgSim += Nq2Avg[i];
+			Ns2AvgSim += Ns2Avg[i];
+			N2AvgSim += N2Avg[i];
 			W1AvgSim += W1Avg[i];
-			W2AvgSim += W2Avg[i];
 			X1AvgSim += X1Avg[i];
+			T1AvgSim += T1Avg[i];
+			W2AvgSim += W2Avg[i];
 			X2AvgSim += X2Avg[i];
+			T2AvgSim += T2Avg[i];
 
 			W1VariancePerRoundSim += W1VariancePerRound[i];
 			W2VariancePerRoundSim += W2VariancePerRound[i];
@@ -470,16 +487,16 @@ class QueueSystem {
 		// Cálculo e Exibição das Esperanças de todas as rodadas juntas (média das amostras)
 		Nq1AvgSim /= nRounds;
 		Ns1AvgSim /= nRounds;
-		let N1AvgSim = Nq1AvgSim + Ns1AvgSim;
+		N1AvgSim /= nRounds;
 		W1AvgSim /= nRounds;
 		X1AvgSim /= nRounds;
-		let T1AvgSim = W1AvgSim + X1AvgSim;
+		T1AvgSim /= nRounds;
 		Nq2AvgSim /= nRounds;
 		Ns2AvgSim /= nRounds;
-		let N2AvgSim = Nq2AvgSim + Ns2AvgSim;
+		N2AvgSim /= nRounds;
 		W2AvgSim /= nRounds;
 		X2AvgSim /= nRounds;
-		let T2AvgSim = W2AvgSim + X2AvgSim;
+		T2AvgSim /= nRounds;
 
 		W1VariancePerRoundSim /= nRounds;
 		W2VariancePerRoundSim /= nRounds;
