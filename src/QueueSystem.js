@@ -88,8 +88,12 @@ class QueueSystem {
 		let w2PerTime  = [];
 
 		let nPoints = 200; // Quantos pontos serão coletados para o gráfico
-		if(nCustomers + nTransient < nPoints)
-			nPoints = nCustomers + nTransient;
+		if(nCustomers*nRounds + nTransient < nPoints)
+			nPoints = nCustomers*nRounds + nTransient;
+
+		let interval = parseInt((nCustomers*nRounds + nTransient) / nPoints, 10);
+
+		nPoints = parseInt((nCustomers*nRounds + nTransient) / interval, 10);
 
 		let currentNs1;
 		let currentNq1;
@@ -105,6 +109,15 @@ class QueueSystem {
 		Utils.setDeterministicArrivals([1, 2]);
 		Utils.setDeterministicX1s([1, 10]);
 		Utils.setDeterministicX2s([3, 2]);
+
+
+
+		let totalNs1 = 0; //Ns1Avg[-1] + Ns1Avg[0];
+		let totalNq1 = 0; //Nq1Avg[-1] + Nq1Avg[0];
+		let totalW1  = 0; //W1Avg[-1] + W1Avg[0];
+		let totalNs2 = 0; //Ns2Avg[-1] + Ns2Avg[0];
+		let totalNq2 = 0; //Nq2Avg[-1] + Nq2Avg[0];
+		let totalW2  = 0; //W2Avg[-1] + W2Avg[0];
 
 
 		// Loop da simulação é executado até nCustomers terem saído do sistema
@@ -159,6 +172,7 @@ class QueueSystem {
 							W1[executingCustomerRound] = [];
 						W1[executingCustomerRound].push(currentW1);
 						W1Avg[executingCustomerRound] += currentW1;
+						totalW1 += currentW1;
 						queue1.shift(); // Shift() é uma função de array que remove seu primeiro elemento, e atualiza os índices de todos os elementos.
 						executingCustomer.priority = 2;
 						executingCustomer.arrival2 = currentTime - time;
@@ -178,6 +192,7 @@ class QueueSystem {
 							W2[executingCustomerRound] = [];
 						W2[executingCustomerRound].push(currentW2);
 						W2Avg[executingCustomerRound] += currentW2;
+						totalW2 += currentW2;
 						queue2.shift(); // Shift() é uma função de array que remove seu primeiro elemento, e atualiza os índices de todos os elementos.
 						// Apenas considerando fregueses que saíram e que não fazem parte do período transiente.
 						if (executingCustomer.id >= 0)
@@ -247,8 +262,10 @@ class QueueSystem {
 			*/
 			currentNq1 = queue1.length;
 			Nq1Avg[currentRound] += currentNq1;
+			totalNq1 += currentNq1;
 			currentNq2 = queue2.length;
 			Nq2Avg[currentRound] += currentNq2;
+			totalNq2 += currentNq2;
 
 			currentNs1 = currentNs2 = 0;
 
@@ -263,8 +280,10 @@ class QueueSystem {
 				if (executingCustomer.priority == 1){
 					currentNq1--;
 					Nq1Avg[currentRound]--;
+					totalNq1--;
 					currentNs1++;
 					Ns1Avg[currentRound]++;
+					totalNs1++;
 				} 
 				// Se existe alguém da fila 2 executando, é necessário atualizar as Esperanças de Nq1 e Ns1.
 				// Além disso, por conta de prioridade, o freguês que chegou no sistema toma o lugar do freguês da fila 2 que estava no servidor.
@@ -272,8 +291,10 @@ class QueueSystem {
 					executingCustomer = customer;
 					currentNq2--;
 					Nq2Avg[currentRound]--;
+					totalNq2--;
 					currentNs2++;
 					Ns2Avg[currentRound]++;
+					totalNs2++;
 				}
 			}
 			nextCustomerId++; // Incrementando ID a ser utilizado na criação de fregueses
@@ -281,17 +302,21 @@ class QueueSystem {
 			/* 
 				A cada <interval> iterações, adiciona as médias atuais nas listas.
 			*/
-			let interval = parseInt((nCustomers + nTransient) / nPoints, 10);
+			
 
-			if (nextCustomerId % interval === 0) {
+			if ((nextCustomerId + nTransient) % interval === 0 && nextCustomerId <= nCustomers * nRounds) {
 				let totalId = (nextCustomerId + nTransient);
 
+				//console.log("nextCustomerId = " + nextCustomerId)
+
+				/*
 				let totalNs1 = Ns1Avg[-1] + Ns1Avg[0];
 				let totalNq1 = Nq1Avg[-1] + Nq1Avg[0];
 				let totalW1  = W1Avg[-1] + W1Avg[0];
 				let totalNs2 = Ns2Avg[-1] + Ns2Avg[0];
 				let totalNq2 = Nq2Avg[-1] + Nq2Avg[0];
 				let totalW2  = W2Avg[-1] + W2Avg[0];
+				*/
 
 				ns1PerTime.push(totalNs1 / totalId);
 				nq1PerTime.push(totalNq1 / totalId);
@@ -304,7 +329,9 @@ class QueueSystem {
 
 		}
 
-		let totalId = (nextCustomerId + nTransient);
+		let totalId = nPoints * interval; //(nextCustomerId + nTransient);
+
+		//console.log("totalId = " + totalId + ", nPoints = " + nPoints + ", interval = " + interval);
 
 		// Desenhando gráficos só ao final
 		this.renderChart(nTransient, totalId, ns1PerTime, nPoints, '#chartNs1');
@@ -757,17 +784,26 @@ class QueueSystem {
 		nTransient - número de pessoas na fase transiente
 		nTotal - número total de pessoas, incluindo fase transiente
 		dataPerTime - dados coletados a cada <intervalo> iterações
+		nPoints - número de pontos para usar na plotagem do gráfico
 		chartId - id do elemento onde será desenhado o gráfico
 	*/
 	renderChart(nTransient, nTotal, dataPerTime, nPoints, chartId){
 
 		let labelArray = [];
-		let interval = parseInt(nTotal / nPoints, 10); // De quantos em quantos clientes os dados foram coletados
+		//let interval = parseInt(nTotal / nPoints, 10); // De quantos em quantos clientes os dados foram coletados
+		let interval = nTotal / nPoints;
+
 		for (let i = 0; i < nPoints; i++) {
 			labelArray[i] = i*interval;
 		}
 
-		const transientValues = dataPerTime.slice(0, nTransient/interval + 1);
+		let labelQuantity = parseInt(nPoints / 10, 10);
+
+		//dataPerTime.unshift(0);
+		//console.log(labelArray);
+		//console.log(dataPerTime);
+
+		const transientValues = dataPerTime.slice(0, parseInt(nTransient/interval, 10));
 
 		const dataRhoChart = {
 				labels: labelArray,
@@ -778,7 +814,8 @@ class QueueSystem {
 			
 			axisX: {
 				labelInterpolationFnc: function skipLabels(value, index) {
-					return (index % (nPoints/10)) === 0 ? value : null;
+					return ((index) % labelQuantity) === 0 ? (value) : null;
+					//return value+1;
 				}
 			},
 			axisY: {
