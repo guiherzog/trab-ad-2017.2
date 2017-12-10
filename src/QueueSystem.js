@@ -441,8 +441,8 @@ class QueueSystem {
 				W2VariancePerRound[i] += Math.pow(W2[i][j] - W2Avg[i], 2);
 			}
 
-			W1VariancePerRound[i] /= W1.length;
-			W2VariancePerRound[i] /= W2.length;
+			W1VariancePerRound[i] /= W1[i].length - 1;
+			W2VariancePerRound[i] /= W2[i].length - 1;
 
 
 			// Renderiza tabela de esperanças de cada rodada
@@ -700,7 +700,6 @@ class QueueSystem {
 
 		
 		// Precisão dos intervalos de confiança calculados com a t-Student
-
 		let Nq1CIPrecision = Nq1CI / Nq1AvgSim;
 		let Ns1CIPrecision = Ns1CI / Ns1AvgSim;
 		let N1CIPrecision = N1CI / N1AvgSim;
@@ -740,7 +739,6 @@ class QueueSystem {
 		//W1AllRoundsVariance /= nRounds * nCustomers;
 		//W2AllRoundsVariance /= nRounds * nCustomers;
 
-
 		// Intervalo de confiança de V[W1] e V[W2] usando chi-squared
 
 		// É usada como variância a média da variância de todos os rounds, e n = número de fregueses em um round.
@@ -761,34 +759,10 @@ class QueueSystem {
 
 
 		// Precisão dos ICs calculados com a chi-squared
-
 		let chi2Precision = (chi2Low - chi2Up) / (chi2Low + chi2Up);
 
 		document.getElementById("ciW1VarCprecision").innerHTML = (chi2Precision*100).toFixed(1) + "%";;
 		document.getElementById("ciW2VarCprecision").innerHTML = (chi2Precision*100).toFixed(1) + "%";;
-
-
-
-		// console.log(`
-		// 	Valores médios gerais da Simulação:
-
-		// 		Nq1 médio = ${Nq1AvgSim}
-		// 		Ns1 médio = ${Ns1AvgSim}
-		// 		N1  médio = ${N1AvgSim}
-
-		// 		Nq2 médio = ${Nq2AvgSim}
-		// 		Ns2 médio = ${Ns2AvgSim}
-		// 		N2  médio = ${N2AvgSim}
-
-		// 		W1 médio = ${W1AvgSim}
-		// 		X1 médio = ${X1AvgSim}
-		// 		T1 médio = ${T1AvgSim}
-
-		// 		W2 médio = ${W2AvgSim}
-		// 		X2 médio = ${X2AvgSim}
-		// 		T2 médio = ${T2AvgSim}
-		// `);
-
 	}
 
 
