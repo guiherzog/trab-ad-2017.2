@@ -92,6 +92,6 @@ function renderNotification(from, align, msg){
 
 addFormListener();
 
-$("#nCustomersField").val("5000");
-$("#nRoundsField").val("80");
-$("#rhoField").val("0.9");
+$("#nCustomersField").val("500");
+$("#nRoundsField").val("3100");
+$("#rhoField").val("0.4");
