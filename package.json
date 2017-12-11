@@ -1,10 +1,18 @@
 {
-  "name": "adsimulador",
+  "name": "SimAD",
   "version": "1.0.0",
   "description": "Simulador de Filas com Prioridade - AD 2017.2.",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "build": {
+  "appId": "simulatorAD",
+  "mac": {
+      "category": "simulator"
+    }
   },
   "repository": "https://github.com/guiherzog/trab-ad-2017.2",
   "keywords": [
@@ -16,7 +24,9 @@
   "author": "Guilherme Herzog, Lucas Carneiro, Eduardo Costa",
   "license": "MIT",
   "devDependencies": {
-    "electron": "~1.6.2"
+    "electron": "~1.6.2",
+    "electron-builder": "^19.48.3",
+    "electron-packager": "^10.1.0"
   },
   "dependencies": {
     "inv-chisquare-cdf": "^1.0.0",
