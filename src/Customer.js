@@ -12,8 +12,6 @@ class Customer {
 		this.X2 = service2Time;
 		this.remainingTime = this.X1;
 		this.priority = 1;
-
-		// TODO acertar nomes
 	}
 }
 

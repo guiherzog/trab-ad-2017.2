@@ -26,6 +26,7 @@ class Utils {
 		return - Math.log(1 - randomSeed()) / rate;
 	}
 
+	// Gera um tempo de chegada determinístico.
 	static getDeterministicArrival() {
 		if(deterministicArrivals.length > 0)
 			return deterministicArrivals.shift();
@@ -33,6 +34,7 @@ class Utils {
 			return 100;
 	}
 
+	// Gera um tempo de serviço determinístico.
 	static getDeterministicX1() {
 		if(deterministicX1.length > 0)
 			return deterministicX1.shift();
@@ -40,6 +42,7 @@ class Utils {
 			return 1;
 	}
 
+	// Gera um tempo de serviço determinístico.
 	static getDeterministicX2() {
 		if(deterministicX2.length > 0)
 			return deterministicX2.shift();
@@ -58,6 +61,7 @@ class Utils {
 		deterministicX2 = v;
 	}
 
+	// Calcula o inverso da CDF da Chi Square
 	static getInverseChiSquaredCDF(probability, degreeOfFreedom) {
 		return chi2inv.invChiSquareCDF(probability, degreeOfFreedom);
 	}

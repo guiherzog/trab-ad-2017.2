@@ -5,7 +5,6 @@
 	 - Número do freguês
 	 - Tipo de evento:
 		- Chegou no sistema (= chegada fila 1)
-		- Inicio servico
 		- Fim servico 
 			- Se for da fila 1, indica a chegada na fila 2.
 			- Se for da fila 2, indica a saída do sistema.

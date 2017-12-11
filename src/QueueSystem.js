@@ -320,18 +320,6 @@ class QueueSystem {
 
 			if ((nextCustomerId + nTransient) % interval === 0 && nextCustomerId <= nCustomers * nRounds) {
 				let totalId = (nextCustomerId + nTransient);
-
-				//console.log("nextCustomerId = " + nextCustomerId)
-
-				/*
-				let totalNs1 = Ns1Avg[-1] + Ns1Avg[0];
-				let totalNq1 = Nq1Avg[-1] + Nq1Avg[0];
-				let totalW1  = W1Avg[-1] + W1Avg[0];
-				let totalNs2 = Ns2Avg[-1] + Ns2Avg[0];
-				let totalNq2 = Nq2Avg[-1] + Nq2Avg[0];
-				let totalW2  = W2Avg[-1] + W2Avg[0];
-				*/
-
 				ns1PerTime.push(totalNs1 / totalId);
 				nq1PerTime.push(totalNq1 / totalId);
 			 	w1PerTime.push(totalW1  / totalId);
@@ -344,8 +332,6 @@ class QueueSystem {
 		}
 
 		let totalId = nPoints * interval; //(nextCustomerId + nTransient);
-
-		//console.log("totalId = " + totalId + ", nPoints = " + nPoints + ", interval = " + interval);
 
 		// Desenhando gráficos só ao final
 		this.renderChart(nTransient, totalId, ns1PerTime, nPoints, '#chartNs1');
@@ -362,38 +348,6 @@ class QueueSystem {
 			Além disso, com os valores de Nq, Ns, W e X finalmente calculados para ambas filas, podemos calcular
 			a Esperança do número de pessoas de cada fila, além da Esperança de tempo total de cada fila.
 		*/
-
-
-
-		// Calculando variância geral de todos os fregueses, sem separar por rounds
-		/*
-		let W1AllRoundsAvg = 0;
-		let W2AllRoundsAvg = 0;
-
-		for (let i = 0; i < nRounds; i++) {
-			W1AllRoundsAvg += W1Avg[i];
-			W2AllRoundsAvg += W2Avg[i];
-		}
-
-		W1AllRoundsAvg /= nRounds * nCustomers;
-		W2AllRoundsAvg /= nRounds * nCustomers;
-
-
-		let W1AllRoundsVariance = 0;
-		let W2AllRoundsVariance = 0;
-
-		for(let i = 0; i < nRounds; i++) {
-			for(let j = 0; j < W1[i].length; j++) {
-				W1AllRoundsVariance += Math.pow(W1[i][j] - W1AllRoundsAvg, 2);
-				W2AllRoundsVariance += Math.pow(W2[i][j] - W2AllRoundsAvg, 2);
-			}
-		}
-
-		W1AllRoundsVariance /= nRounds * nCustomers;
-		W2AllRoundsVariance /= nRounds * nCustomers;
-		*/
-
-
 
 		// Inicialização das Esperanças de todas as rodadas juntas (média das amostras)
 		let Nq1AvgSim = 0;
@@ -472,27 +426,6 @@ class QueueSystem {
 	 				</tr>
 				`;
 			}
-
-
-			// console.log(`
-			// 	Valores médios:
-
-			// 		Nq1 médio = ${Nq1Avg[i]}
-			// 		Ns1 médio = ${Ns1Avg[i]}
-			// 		N1  médio = ${N1Avg}
-
-			// 		Nq2 médio = ${Nq2Avg[i]}
-			// 		Ns2 médio = ${Ns2Avg[i]}
-			// 		N2  médio = ${N2Avg}
-
-			// 		W1 médio = ${W1Avg[i]}
-			// 		X1 médio = ${X1Avg[i]}
-			// 		T1 médio = ${T1Avg}
-
-			// 		W2 médio = ${W2Avg[i]}
-			// 		X2 médio = ${X2Avg[i]}
-			// 		T2 médio = ${T2Avg}
-			// `);
 
 			Nq1AvgSim += Nq1Avg[i];
 			Ns1AvgSim += Ns1Avg[i];
@@ -662,7 +595,7 @@ class QueueSystem {
 		let W2VarCI  = 1.96 * W2VarianceStdDev  / sqrtNRounds;
 		
 
-
+		/* MÉTODOS RESPONSÁVEIS POR ATUALIZAR A INTERFACE COM OS RESULTADOS OBTIDOS */
 		document.getElementById("ciNq1").innerHTML = "Entre <b>" + (Nq1AvgSim - Nq1CI).toFixed(5) + "</b> e <b>" + (Nq1AvgSim + Nq1CI).toFixed(5) + "</b>";
 		document.getElementById("ciNs1").innerHTML = "Entre <b>" + (Ns1AvgSim - Ns1CI).toFixed(5) + "</b> e <b>" + (Ns1AvgSim + Ns1CI).toFixed(5) + "</b>";
 		document.getElementById("ciN1").innerHTML  = "Entre <b>" + (N1AvgSim - N1CI).toFixed(5) + "</b> e <b>" + (N1AvgSim + N1CI).toFixed(5) + "</b>";
@@ -735,12 +668,7 @@ class QueueSystem {
 		document.getElementById("ciW1VarTprecision").innerHTML = (W1VarCIPrecision*100).toFixed(1) + "%";
 		document.getElementById("ciW2VarTprecision").innerHTML = (W2VarCIPrecision*100).toFixed(1) + "%";
 
-
-		//W1AllRoundsVariance /= nRounds * nCustomers;
-		//W2AllRoundsVariance /= nRounds * nCustomers;
-
 		// Intervalo de confiança de V[W1] e V[W2] usando chi-squared
-
 		// É usada como variância a média da variância de todos os rounds, e n = número de fregueses em um round.
 
 		let alpha = 0.05;
@@ -765,10 +693,7 @@ class QueueSystem {
 		document.getElementById("ciW2VarCprecision").innerHTML = (chi2Precision*100).toFixed(2) + "%";;
 	}
 
-
-	//this.renderChart(nTransient, totalId, w2PerTime, '#chartW2');
-
-	// Método que renderiza um gráfico em função do mundo de fregueses.
+	// Método que renderiza um gráfico em função do total de fregueses.
 	/*
 		nTransient - número de pessoas na fase transiente
 		nTotal - número total de pessoas, incluindo fase transiente
@@ -788,10 +713,6 @@ class QueueSystem {
 
 		let labelQuantity = parseInt(nPoints / 10, 10);
 
-		//dataPerTime.unshift(0);
-		//console.log(labelArray);
-		//console.log(dataPerTime);
-
 		const transientValues = dataPerTime.slice(0, parseInt(nTransient/interval, 10));
 
 		const dataRhoChart = {
@@ -804,7 +725,6 @@ class QueueSystem {
 			axisX: {
 				labelInterpolationFnc: function skipLabels(value, index) {
 					return ((index) % labelQuantity) === 0 ? (value) : null;
-					//return value+1;
 				}
 			},
 			axisY: {

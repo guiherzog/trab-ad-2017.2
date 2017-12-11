@@ -1,12 +1,12 @@
 const { QueueSystem } = require('./src/QueueSystem');
-
 let QueueSystem1 = new QueueSystem();
 
-// Método responsável por gerenciar o form e executar a simulação ao clicar em play.
+// Método responsável por gerenciar os parâmetros e executar a simulação ao clicar em play.
 function addFormListener(){
 	$("#runForm").submit((e)=>{
 		e.preventDefault();
-		// Valores defaults dos parametros
+
+		// Valores defaults dos parâmetros
 		let nCustomers = parseInt($("#nCustomersField").val());
 		let nTransient = parseInt($("#nTransient").val());
 		let nRounds = parseInt($("#nRoundsField").val());
@@ -19,36 +19,36 @@ function addFormListener(){
 			else                nTransient = 40000;
 		}
 
-
-		// Erros
+		// Verificadores de erros ou warnings.
 		if(nCustomers > 25000000) {
 			setTimeout(()=>
 				renderNotification('top', 'center', "O número de fregueses por rodada não pode ser maior do que 25 milhões."), 200);
 		}
-
+		// Se total de fregueses ultrapassa 70 milhões, nao rodar a aplicação
 		else if(nTransient + nCustomers*nRounds > 70000000) {
 			setTimeout(()=>
 				renderNotification('top', 'center', "O Fator Mínimo (Periodo Transiente + Fregueses x Rodadas) não pode ser maior do que 70 milhões."), 200);
 		}
 
+		// Se algum parâmetro for menor que zero, exibe alerta e não roda simulação.
 		else if(nTransient < 0 || nCustomers <= 0 || nRounds <= 0 || rho <= 0) {
 			renderNotification('top', 'center', "Todos os campos são obrigatórios e precisam ser maiores que ZERO.");
 		}
 
-		// Sem erro
+		// Caso nenhum erro aconteça roda normalmente.
 		else {
 			renderRunningNotification('top', 'center');
 			setTimeout(()=>QueueSystem1.runSimulation(nTransient, nCustomers, nRounds, rho), 100)
 		}
 
-
-
+		// Exibe Warning se tiver poucos fregueses no total.
 		if (nTransient + nCustomers*nRounds < 100)
 		{
 			setTimeout(()=>
 				renderNotification('top', 'center', "O Fator Mínimo (Periodo Transiente + Fregueses x Rodadas) é muito pequeno, alguns valores não serão calculados corretamente."), 200);
 		}
 
+		// Se tiver apenas um round avisa que não vai calcular o IC.
 		if (nRounds == 1){
 			setTimeout(()=>
 				renderNotification('top', 'center', "Para calcular o IC é preciso no mínimo 2 rodadas. O IC não será calculado corretamente."), 200);
@@ -91,7 +91,7 @@ function renderNotification(from, align, msg){
 }
 
 addFormListener();
-
+// Define os parâmetros iniciais.
 $("#nCustomersField").val("500");
 $("#nRoundsField").val("3100");
 $("#rhoField").val("0.4");
