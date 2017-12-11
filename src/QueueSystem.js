@@ -761,8 +761,8 @@ class QueueSystem {
 		// Precisão dos ICs calculados com a chi-squared
 		let chi2Precision = (chi2Low - chi2Up) / (chi2Low + chi2Up);
 
-		document.getElementById("ciW1VarCprecision").innerHTML = (chi2Precision*100).toFixed(1) + "%";;
-		document.getElementById("ciW2VarCprecision").innerHTML = (chi2Precision*100).toFixed(1) + "%";;
+		document.getElementById("ciW1VarCprecision").innerHTML = (chi2Precision*100).toFixed(2) + "%";;
+		document.getElementById("ciW2VarCprecision").innerHTML = (chi2Precision*100).toFixed(2) + "%";;
 	}
 
 
