@@ -13,10 +13,10 @@ function addFormListener(){
 		let rho = parseFloat($("#rhoField").val());
 
 		if($("#nTransient").val() === "") {
-			     if(rho < 0.4) nTransient = 10000;
-			else if(rho < 0.6) nTransient = 15000;
-			else if(rho < 0.8) nTransient = 30000;
-			else               nTransient = 50000;
+			     if(rho <= 0.4) nTransient = 10000;
+			else if(rho <= 0.6) nTransient = 15000;
+			else if(rho <= 0.8) nTransient = 20000;
+			else                nTransient = 40000;
 		}
 
 
