@@ -27,7 +27,7 @@ function addFormListener(){
 		// Se total de fregueses ultrapassa 70 milhões, nao rodar a aplicação
 		else if(nTransient + nCustomers*nRounds > 70000000) {
 			setTimeout(()=>
-				renderNotification('top', 'center', "O Fator Mínimo (Periodo Transiente + Fregueses x Rodadas) não pode ser maior do que 70 milhões."), 200);
+				renderNotification('top', 'center', "O número total de fregueses (Periodo Transiente + Fregueses x Rodadas) não pode ser maior do que 70 milhões."), 200);
 		}
 
 		// Se algum parâmetro for menor que zero, exibe alerta e não roda simulação.
@@ -45,7 +45,7 @@ function addFormListener(){
 		if (nTransient + nCustomers*nRounds < 100)
 		{
 			setTimeout(()=>
-				renderNotification('top', 'center', "O Fator Mínimo (Periodo Transiente + Fregueses x Rodadas) é muito pequeno, alguns valores não serão calculados corretamente."), 200);
+				renderNotification('top', 'center', "O número total de fregueses (Periodo Transiente + Fregueses x Rodadas) é muito pequeno, alguns valores não serão calculados corretamente."), 200);
 		}
 
 		// Se tiver apenas um round avisa que não vai calcular o IC.
