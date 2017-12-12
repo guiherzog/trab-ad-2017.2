@@ -18,12 +18,17 @@ class QueueSystem {
 			"Executando simulação...";
 
 		let startTime = new Date().getTime();
-		this.runRounds(nTransient, nCustomers, nRounds, lambda, mi);
+		let nPrecisionOK = 0;
+		let nTests = 100;
+		for (let i=0; i<nTests; i++){
+			if(this.runRounds(nTransient, nCustomers, nRounds, lambda, mi))
+				nPrecisionOK++;
+		}
 		let endTime = new Date().getTime();
 
 		$.notifyClose();
 		document.getElementById("simTitle").innerHTML = 
-			"Simulação finalizada em "+((endTime -  startTime)/1000)+" segundos";
+			"Simulação com "+((endTime -  startTime)/1000)+" segundos<br>"+nPrecisionOK+"/"+nTests+" casos com precisão <= 5";
 	}
 
 	/*
@@ -318,15 +323,15 @@ class QueueSystem {
 			*/
 			
 
-			if ((nextCustomerId + nTransient) % interval === 0 && nextCustomerId <= nCustomers * nRounds) {
-				let totalId = (nextCustomerId + nTransient);
-				ns1PerTime.push(totalNs1 / totalId);
-				nq1PerTime.push(totalNq1 / totalId);
-			 	w1PerTime.push(totalW1  / totalId);
-				ns2PerTime.push(totalNs2 / totalId);
-				nq2PerTime.push(totalNq2 / totalId);
-			 	w2PerTime.push(totalW2  / totalId);
-			}
+			// if ((nextCustomerId + nTransient) % interval === 0 && nextCustomerId <= nCustomers * nRounds) {
+			// 	let totalId = (nextCustomerId + nTransient);
+			// 	ns1PerTime.push(totalNs1 / totalId);
+			// 	nq1PerTime.push(totalNq1 / totalId);
+			//  	w1PerTime.push(totalW1  / totalId);
+			// 	ns2PerTime.push(totalNs2 / totalId);
+			// 	nq2PerTime.push(totalNq2 / totalId);
+			//  	w2PerTime.push(totalW2  / totalId);
+			// }
 
 
 		}
@@ -334,12 +339,12 @@ class QueueSystem {
 		let totalId = nPoints * interval; //(nextCustomerId + nTransient);
 
 		// Desenhando gráficos só ao final
-		this.renderChart(nTransient, totalId, ns1PerTime, nPoints, '#chartNs1');
-		this.renderChart(nTransient, totalId, nq1PerTime, nPoints, '#chartNq1');
-		this.renderChart(nTransient, totalId, w1PerTime,  nPoints, '#chartW1');
-		this.renderChart(nTransient, totalId, ns2PerTime, nPoints, '#chartNs2');
-		this.renderChart(nTransient, totalId, nq2PerTime, nPoints, '#chartNq2');
-		this.renderChart(nTransient, totalId, w2PerTime,  nPoints, '#chartW2');
+		// this.renderChart(nTransient, totalId, ns1PerTime, nPoints, '#chartNs1');
+		// this.renderChart(nTransient, totalId, nq1PerTime, nPoints, '#chartNq1');
+		// this.renderChart(nTransient, totalId, w1PerTime,  nPoints, '#chartW1');
+		// this.renderChart(nTransient, totalId, ns2PerTime, nPoints, '#chartNs2');
+		// this.renderChart(nTransient, totalId, nq2PerTime, nPoints, '#chartNq2');
+		// this.renderChart(nTransient, totalId, w2PerTime,  nPoints, '#chartW2');
 
 
 		/*
@@ -400,32 +405,32 @@ class QueueSystem {
 
 
 			// Renderiza tabela de esperanças de cada rodada
-			if (nRounds <= 100 ||
-			   (nRounds > 100 && (i % parseInt(0.01*nRounds) == 0))){			
-				meanRows +=`
-	 				<tr>
-	 					<td>${i + 1}</td>
-	 					<td>${Nq1Avg[i].toFixed(5)}</td>
-	 					<td>${Ns1Avg[i].toFixed(5)}</td>
-	 					<td>${N1Avg[i].toFixed(5)}</td>
+			// if (nRounds <= 100 ||
+			//    (nRounds > 100 && (i % parseInt(0.01*nRounds) == 0))){			
+			// 	meanRows +=`
+	 	// 			<tr>
+	 	// 				<td>${i + 1}</td>
+	 	// 				<td>${Nq1Avg[i].toFixed(5)}</td>
+	 	// 				<td>${Ns1Avg[i].toFixed(5)}</td>
+	 	// 				<td>${N1Avg[i].toFixed(5)}</td>
 
-	 					<td>${W1Avg[i].toFixed(5)}</td>
-	 					<td>${X1Avg[i].toFixed(5)}</td>
-	 					<td>${T1Avg[i].toFixed(5)}</td>
+	 	// 				<td>${W1Avg[i].toFixed(5)}</td>
+	 	// 				<td>${X1Avg[i].toFixed(5)}</td>
+	 	// 				<td>${T1Avg[i].toFixed(5)}</td>
 
-	 					<td>${Nq2Avg[i].toFixed(5)}</td>
-	 					<td>${Ns2Avg[i].toFixed(5)}</td>
-	 					<td>${N2Avg[i].toFixed(5)}</td>
+	 	// 				<td>${Nq2Avg[i].toFixed(5)}</td>
+	 	// 				<td>${Ns2Avg[i].toFixed(5)}</td>
+	 	// 				<td>${N2Avg[i].toFixed(5)}</td>
 
-	 					<td>${W2Avg[i].toFixed(5)}</td>
-	 					<td>${X2Avg[i].toFixed(5)}</td>
-	 					<td>${T2Avg[i].toFixed(5)}</td>
+	 	// 				<td>${W2Avg[i].toFixed(5)}</td>
+	 	// 				<td>${X2Avg[i].toFixed(5)}</td>
+	 	// 				<td>${T2Avg[i].toFixed(5)}</td>
 
-	 					<td>${W1VariancePerRound[i].toFixed(5)}</td>
-	 					<td>${W2VariancePerRound[i].toFixed(5)}</td>
-	 				</tr>
-				`;
-			}
+	 	// 				<td>${W1VariancePerRound[i].toFixed(5)}</td>
+	 	// 				<td>${W2VariancePerRound[i].toFixed(5)}</td>
+	 	// 			</tr>
+			// 	`;
+			// }
 
 			Nq1AvgSim += Nq1Avg[i];
 			Ns1AvgSim += Ns1Avg[i];
@@ -462,34 +467,34 @@ class QueueSystem {
 		W2VariancePerRoundSim /= nRounds;
 
 		// Renderiza tabela de média das esperanças
-		meanRows += `
-			<tr>
-				<td><strong>Média</strong></td>
+		// meanRows += `
+		// 	<tr>
+		// 		<td><strong>Média</strong></td>
 				
-				<td><strong>${Nq1AvgSim.toFixed(5)}</strong></td>
-				<td><strong>${Ns1AvgSim.toFixed(5)}</strong></td>
-				<td><strong>${N1AvgSim.toFixed(5)}</strong></td>
+		// 		<td><strong>${Nq1AvgSim.toFixed(5)}</strong></td>
+		// 		<td><strong>${Ns1AvgSim.toFixed(5)}</strong></td>
+		// 		<td><strong>${N1AvgSim.toFixed(5)}</strong></td>
 
-				<td><strong>${W1AvgSim.toFixed(5)}</strong></td>
-				<td><strong>${X1AvgSim.toFixed(5)}</strong></td>
-				<td><strong>${T1AvgSim.toFixed(5)}</strong></td>
+		// 		<td><strong>${W1AvgSim.toFixed(5)}</strong></td>
+		// 		<td><strong>${X1AvgSim.toFixed(5)}</strong></td>
+		// 		<td><strong>${T1AvgSim.toFixed(5)}</strong></td>
 
 
-				<td><strong>${Nq2AvgSim.toFixed(5)}</strong></td>
-				<td><strong>${Ns2AvgSim.toFixed(5)}</strong></td>
-				<td><strong>${N2AvgSim.toFixed(5)}</strong></td>
+		// 		<td><strong>${Nq2AvgSim.toFixed(5)}</strong></td>
+		// 		<td><strong>${Ns2AvgSim.toFixed(5)}</strong></td>
+		// 		<td><strong>${N2AvgSim.toFixed(5)}</strong></td>
 
-				<td><strong>${W2AvgSim.toFixed(5)}</strong></td>
-				<td><strong>${X2AvgSim.toFixed(5)}</strong></td>
-				<td><strong>${T2AvgSim.toFixed(5)}</strong></td>
+		// 		<td><strong>${W2AvgSim.toFixed(5)}</strong></td>
+		// 		<td><strong>${X2AvgSim.toFixed(5)}</strong></td>
+		// 		<td><strong>${T2AvgSim.toFixed(5)}</strong></td>
 
-				<td><strong>${W1VariancePerRoundSim.toFixed(5)}</strong></td>
-				<td><strong>${W2VariancePerRoundSim.toFixed(5)}</strong></td>
-			</tr>
-		`;
+		// 		<td><strong>${W1VariancePerRoundSim.toFixed(5)}</strong></td>
+		// 		<td><strong>${W2VariancePerRoundSim.toFixed(5)}</strong></td>
+		// 	</tr>
+		// `;
 
 		// Renderiza tabela de esperanças.
-		document.getElementById("meanList").innerHTML = meanRows;
+		// document.getElementById("meanList").innerHTML = meanRows;
 
 		let Nq1Variance = 0;
 		let Ns1Variance = 0;
@@ -596,40 +601,40 @@ class QueueSystem {
 		
 
 		/* MÉTODOS RESPONSÁVEIS POR ATUALIZAR A INTERFACE COM OS RESULTADOS OBTIDOS */
-		document.getElementById("ciNq1").innerHTML = "Entre <b>" + (Nq1AvgSim - Nq1CI).toFixed(5) + "</b> e <b>" + (Nq1AvgSim + Nq1CI).toFixed(5) + "</b>";
-		document.getElementById("ciNs1").innerHTML = "Entre <b>" + (Ns1AvgSim - Ns1CI).toFixed(5) + "</b> e <b>" + (Ns1AvgSim + Ns1CI).toFixed(5) + "</b>";
-		document.getElementById("ciN1").innerHTML  = "Entre <b>" + (N1AvgSim - N1CI).toFixed(5) + "</b> e <b>" + (N1AvgSim + N1CI).toFixed(5) + "</b>";
-		document.getElementById("ciW1").innerHTML  = "Entre <b>" + (W1AvgSim - W1CI).toFixed(5) + "</b> e <b>" + (W1AvgSim + W1CI).toFixed(5) + "</b>";
-		document.getElementById("ciX1").innerHTML  = "Entre <b>" + (X1AvgSim - X1CI).toFixed(5) + "</b> e <b>" + (X1AvgSim + X1CI).toFixed(5) + "</b>";
-		document.getElementById("ciT1").innerHTML  = "Entre <b>" + (T1AvgSim - T1CI).toFixed(5) + "</b> e <b>" + (T1AvgSim + T1CI).toFixed(5) + "</b>";
+		// document.getElementById("ciNq1").innerHTML = "Entre <b>" + (Nq1AvgSim - Nq1CI).toFixed(5) + "</b> e <b>" + (Nq1AvgSim + Nq1CI).toFixed(5) + "</b>";
+		// document.getElementById("ciNs1").innerHTML = "Entre <b>" + (Ns1AvgSim - Ns1CI).toFixed(5) + "</b> e <b>" + (Ns1AvgSim + Ns1CI).toFixed(5) + "</b>";
+		// document.getElementById("ciN1").innerHTML  = "Entre <b>" + (N1AvgSim - N1CI).toFixed(5) + "</b> e <b>" + (N1AvgSim + N1CI).toFixed(5) + "</b>";
+		// document.getElementById("ciW1").innerHTML  = "Entre <b>" + (W1AvgSim - W1CI).toFixed(5) + "</b> e <b>" + (W1AvgSim + W1CI).toFixed(5) + "</b>";
+		// document.getElementById("ciX1").innerHTML  = "Entre <b>" + (X1AvgSim - X1CI).toFixed(5) + "</b> e <b>" + (X1AvgSim + X1CI).toFixed(5) + "</b>";
+		// document.getElementById("ciT1").innerHTML  = "Entre <b>" + (T1AvgSim - T1CI).toFixed(5) + "</b> e <b>" + (T1AvgSim + T1CI).toFixed(5) + "</b>";
 
-		document.getElementById("ciNq2").innerHTML = "Entre <b>" + (Nq2AvgSim - Nq2CI).toFixed(5) + "</b> e <b>" + (Nq2AvgSim + Nq2CI).toFixed(5) + "</b>";
-		document.getElementById("ciNs2").innerHTML = "Entre <b>" + (Ns2AvgSim - Ns2CI).toFixed(5) + "</b> e <b>" + (Ns2AvgSim + Ns2CI).toFixed(5) + "</b>";
-		document.getElementById("ciN2").innerHTML  = "Entre <b>" + (N2AvgSim - N2CI).toFixed(5) + "</b> e <b>" + (N2AvgSim + N2CI).toFixed(5) + "</b>";
-		document.getElementById("ciW2").innerHTML  = "Entre <b>" + (W2AvgSim - W2CI).toFixed(5) + "</b> e <b>" + (W2AvgSim + W2CI).toFixed(5) + "</b>";
-		document.getElementById("ciX2").innerHTML  = "Entre <b>" + (X2AvgSim - X2CI).toFixed(5) + "</b> e <b>" + (X2AvgSim + X2CI).toFixed(5) + "</b>";
-		document.getElementById("ciT2").innerHTML  = "Entre <b>" + (T2AvgSim - T2CI).toFixed(5) + "</b> e <b>" + (T2AvgSim + T2CI).toFixed(5) + "</b>";
+		// document.getElementById("ciNq2").innerHTML = "Entre <b>" + (Nq2AvgSim - Nq2CI).toFixed(5) + "</b> e <b>" + (Nq2AvgSim + Nq2CI).toFixed(5) + "</b>";
+		// document.getElementById("ciNs2").innerHTML = "Entre <b>" + (Ns2AvgSim - Ns2CI).toFixed(5) + "</b> e <b>" + (Ns2AvgSim + Ns2CI).toFixed(5) + "</b>";
+		// document.getElementById("ciN2").innerHTML  = "Entre <b>" + (N2AvgSim - N2CI).toFixed(5) + "</b> e <b>" + (N2AvgSim + N2CI).toFixed(5) + "</b>";
+		// document.getElementById("ciW2").innerHTML  = "Entre <b>" + (W2AvgSim - W2CI).toFixed(5) + "</b> e <b>" + (W2AvgSim + W2CI).toFixed(5) + "</b>";
+		// document.getElementById("ciX2").innerHTML  = "Entre <b>" + (X2AvgSim - X2CI).toFixed(5) + "</b> e <b>" + (X2AvgSim + X2CI).toFixed(5) + "</b>";
+		// document.getElementById("ciT2").innerHTML  = "Entre <b>" + (T2AvgSim - T2CI).toFixed(5) + "</b> e <b>" + (T2AvgSim + T2CI).toFixed(5) + "</b>";
 
-		document.getElementById("ciW1VarT").innerHTML  = "Entre <b>" + (W1VariancePerRoundSim - W1VarCI).toFixed(5) + "</b> e <b>" + (W1VariancePerRoundSim + W1VarCI).toFixed(5) + "</b>";
-		document.getElementById("ciW2VarT").innerHTML  = "Entre <b>" + (W2VariancePerRoundSim - W2VarCI).toFixed(5) + "</b> e <b>" + (W2VariancePerRoundSim + W2VarCI).toFixed(5) + "</b>";
+		// document.getElementById("ciW1VarT").innerHTML  = "Entre <b>" + (W1VariancePerRoundSim - W1VarCI).toFixed(5) + "</b> e <b>" + (W1VariancePerRoundSim + W1VarCI).toFixed(5) + "</b>";
+		// document.getElementById("ciW2VarT").innerHTML  = "Entre <b>" + (W2VariancePerRoundSim - W2VarCI).toFixed(5) + "</b> e <b>" + (W2VariancePerRoundSim + W2VarCI).toFixed(5) + "</b>";
 
 
-		document.getElementById("ciNq1").innerHTML += " (" + Nq1AvgSim.toFixed(5) + " &plusmn; " + Nq1CI.toFixed(15) + ")";
-		document.getElementById("ciNs1").innerHTML += " (" + Ns1AvgSim.toFixed(5) + " &plusmn; " + Ns1CI.toFixed(15) + ")";
-		document.getElementById("ciN1").innerHTML  += " (" + N1AvgSim.toFixed(5)  + " &plusmn; " + N1CI.toFixed(15) + ")";
-		document.getElementById("ciW1").innerHTML  += " (" + W1AvgSim.toFixed(5)  + " &plusmn; " + W1CI.toFixed(15) + ")";
-		document.getElementById("ciX1").innerHTML  += " (" + X1AvgSim.toFixed(5)  + " &plusmn; " + X1CI.toFixed(15) + ")";
-		document.getElementById("ciT1").innerHTML  += " (" + T1AvgSim.toFixed(5)  + " &plusmn; " + T1CI.toFixed(15) + ")";
+		// document.getElementById("ciNq1").innerHTML += " (" + Nq1AvgSim.toFixed(5) + " &plusmn; " + Nq1CI.toFixed(15) + ")";
+		// document.getElementById("ciNs1").innerHTML += " (" + Ns1AvgSim.toFixed(5) + " &plusmn; " + Ns1CI.toFixed(15) + ")";
+		// document.getElementById("ciN1").innerHTML  += " (" + N1AvgSim.toFixed(5)  + " &plusmn; " + N1CI.toFixed(15) + ")";
+		// document.getElementById("ciW1").innerHTML  += " (" + W1AvgSim.toFixed(5)  + " &plusmn; " + W1CI.toFixed(15) + ")";
+		// document.getElementById("ciX1").innerHTML  += " (" + X1AvgSim.toFixed(5)  + " &plusmn; " + X1CI.toFixed(15) + ")";
+		// document.getElementById("ciT1").innerHTML  += " (" + T1AvgSim.toFixed(5)  + " &plusmn; " + T1CI.toFixed(15) + ")";
 
-		document.getElementById("ciNq2").innerHTML += " (" + Nq2AvgSim.toFixed(5) + " &plusmn; " + Nq2CI.toFixed(15) + ")";
-		document.getElementById("ciNs2").innerHTML += " (" + Ns2AvgSim.toFixed(5) + " &plusmn; " + Ns2CI.toFixed(15) + ")";
-		document.getElementById("ciN2").innerHTML  += " (" + N2AvgSim.toFixed(5)  + " &plusmn; " + N2CI.toFixed(15) + ")";
-		document.getElementById("ciW2").innerHTML  += " (" + W2AvgSim.toFixed(5)  + " &plusmn; " + W2CI.toFixed(15) + ")";
-		document.getElementById("ciX2").innerHTML  += " (" + X2AvgSim.toFixed(5)  + " &plusmn; " + X2CI.toFixed(15) + ")";
-		document.getElementById("ciT2").innerHTML  += " (" + T2AvgSim.toFixed(5)  + " &plusmn; " + T2CI.toFixed(15) + ")";
+		// document.getElementById("ciNq2").innerHTML += " (" + Nq2AvgSim.toFixed(5) + " &plusmn; " + Nq2CI.toFixed(15) + ")";
+		// document.getElementById("ciNs2").innerHTML += " (" + Ns2AvgSim.toFixed(5) + " &plusmn; " + Ns2CI.toFixed(15) + ")";
+		// document.getElementById("ciN2").innerHTML  += " (" + N2AvgSim.toFixed(5)  + " &plusmn; " + N2CI.toFixed(15) + ")";
+		// document.getElementById("ciW2").innerHTML  += " (" + W2AvgSim.toFixed(5)  + " &plusmn; " + W2CI.toFixed(15) + ")";
+		// document.getElementById("ciX2").innerHTML  += " (" + X2AvgSim.toFixed(5)  + " &plusmn; " + X2CI.toFixed(15) + ")";
+		// document.getElementById("ciT2").innerHTML  += " (" + T2AvgSim.toFixed(5)  + " &plusmn; " + T2CI.toFixed(15) + ")";
 
-		document.getElementById("ciW1VarT").innerHTML  += " (" + W1VariancePerRoundSim.toFixed(5)  + " &plusmn; " + W1VarCI.toFixed(15) + ")";
-		document.getElementById("ciW2VarT").innerHTML  += " (" + W2VariancePerRoundSim.toFixed(5)  + " &plusmn; " + W2VarCI.toFixed(15) + ")";
+		// document.getElementById("ciW1VarT").innerHTML  += " (" + W1VariancePerRoundSim.toFixed(5)  + " &plusmn; " + W1VarCI.toFixed(15) + ")";
+		// document.getElementById("ciW2VarT").innerHTML  += " (" + W2VariancePerRoundSim.toFixed(5)  + " &plusmn; " + W2VarCI.toFixed(15) + ")";
 
 		
 		// Precisão dos intervalos de confiança calculados com a t-Student
@@ -651,22 +656,24 @@ class QueueSystem {
 		let W2VarCIPrecision = W2VarCI / W2VariancePerRoundSim;
 
 
-		document.getElementById("ciNq1precision").innerHTML = (Nq1CIPrecision*100).toFixed(1) + "%";
-		document.getElementById("ciNs1precision").innerHTML = (Ns1CIPrecision*100).toFixed(1) + "%";
-		document.getElementById("ciN1precision").innerHTML = (N1CIPrecision*100).toFixed(1) + "%";
-		document.getElementById("ciW1precision").innerHTML = (W1CIPrecision*100).toFixed(1) + "%";
-		document.getElementById("ciX1precision").innerHTML = (X1CIPrecision*100).toFixed(1) + "%";
-		document.getElementById("ciT1precision").innerHTML = (T1CIPrecision*100).toFixed(1) + "%";
 
-		document.getElementById("ciNq2precision").innerHTML = (Nq2CIPrecision*100).toFixed(1) + "%";
-		document.getElementById("ciNs2precision").innerHTML = (Ns2CIPrecision*100).toFixed(1) + "%";
-		document.getElementById("ciN2precision").innerHTML = (N2CIPrecision*100).toFixed(1) + "%";
-		document.getElementById("ciW2precision").innerHTML = (W2CIPrecision*100).toFixed(1) + "%";
-		document.getElementById("ciX2precision").innerHTML = (X2CIPrecision*100).toFixed(1) + "%";
-		document.getElementById("ciT2precision").innerHTML = (T2CIPrecision*100).toFixed(1) + "%";
 
-		document.getElementById("ciW1VarTprecision").innerHTML = (W1VarCIPrecision*100).toFixed(1) + "%";
-		document.getElementById("ciW2VarTprecision").innerHTML = (W2VarCIPrecision*100).toFixed(1) + "%";
+		// document.getElementById("ciNq1precision").innerHTML = (Nq1CIPrecision*100).toFixed(1) + "%";
+		// document.getElementById("ciNs1precision").innerHTML = (Ns1CIPrecision*100).toFixed(1) + "%";
+		// document.getElementById("ciN1precision").innerHTML = (N1CIPrecision*100).toFixed(1) + "%";
+		// document.getElementById("ciW1precision").innerHTML = (W1CIPrecision*100).toFixed(1) + "%";
+		// document.getElementById("ciX1precision").innerHTML = (X1CIPrecision*100).toFixed(1) + "%";
+		// document.getElementById("ciT1precision").innerHTML = (T1CIPrecision*100).toFixed(1) + "%";
+
+		// document.getElementById("ciNq2precision").innerHTML = (Nq2CIPrecision*100).toFixed(1) + "%";
+		// document.getElementById("ciNs2precision").innerHTML = (Ns2CIPrecision*100).toFixed(1) + "%";
+		// document.getElementById("ciN2precision").innerHTML = (N2CIPrecision*100).toFixed(1) + "%";
+		// document.getElementById("ciW2precision").innerHTML = (W2CIPrecision*100).toFixed(1) + "%";
+		// document.getElementById("ciX2precision").innerHTML = (X2CIPrecision*100).toFixed(1) + "%";
+		// document.getElementById("ciT2precision").innerHTML = (T2CIPrecision*100).toFixed(1) + "%";
+
+		// document.getElementById("ciW1VarTprecision").innerHTML = (W1VarCIPrecision*100).toFixed(1) + "%";
+		// document.getElementById("ciW2VarTprecision").innerHTML = (W2VarCIPrecision*100).toFixed(1) + "%";
 
 		// Intervalo de confiança de V[W1] e V[W2] usando chi-squared
 		// É usada como variância a média da variância de todos os rounds, e n = número de fregueses em um round.
@@ -682,15 +689,17 @@ class QueueSystem {
 		let W2chi2Lower = (nRounds - 1) * W2VariancePerRoundSim / chi2Low;
 		let W2chi2Upper = (nRounds - 1) * W2VariancePerRoundSim / chi2Up;
 
-		document.getElementById("ciW1VarC").innerHTML = "Entre <b>" + W1chi2Lower.toFixed(5) + "</b> e <b>" + W1chi2Upper.toFixed(5) + "</b>";
-		document.getElementById("ciW2VarC").innerHTML = "Entre <b>" + W2chi2Lower.toFixed(5) + "</b> e <b>" + W2chi2Upper.toFixed(5) + "</b>";
+		// document.getElementById("ciW1VarC").innerHTML = "Entre <b>" + W1chi2Lower.toFixed(5) + "</b> e <b>" + W1chi2Upper.toFixed(5) + "</b>";
+		// document.getElementById("ciW2VarC").innerHTML = "Entre <b>" + W2chi2Lower.toFixed(5) + "</b> e <b>" + W2chi2Upper.toFixed(5) + "</b>";
 
 
 		// Precisão dos ICs calculados com a chi-squared
 		let chi2Precision = (chi2Low - chi2Up) / (chi2Low + chi2Up);
 
-		document.getElementById("ciW1VarCprecision").innerHTML = (chi2Precision*100).toFixed(2) + "%";;
-		document.getElementById("ciW2VarCprecision").innerHTML = (chi2Precision*100).toFixed(2) + "%";;
+		return (Nq1CIPrecision <= 0.05 && Ns1CIPrecision <= 0.05 && N1CIPrecision <= 0.05 && W1CIPrecision <= 0.05 && X1CIPrecision <= 0.05 && T1CIPrecision <= 0.05 && Nq2CIPrecision <= 0.05 && Ns2CIPrecision <= 0.05 && N2CIPrecision <= 0.05 &&W2CIPrecision <= 0.05 && X2CIPrecision <= 0.05 && T2CIPrecision <= 0.05 && W1VarCIPrecision <= 0.05 && W2VarCIPrecision <= 0.05 && chi2Precision <= 0.05);
+
+		// document.getElementById("ciW1VarCprecision").innerHTML = (chi2Precision*100).toFixed(2) + "%";;
+		// document.getElementById("ciW2VarCprecision").innerHTML = (chi2Precision*100).toFixed(2) + "%";;
 	}
 
 	// Método que renderiza um gráfico em função do total de fregueses.
