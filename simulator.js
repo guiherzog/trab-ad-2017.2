@@ -92,6 +92,6 @@ function renderNotification(from, align, msg){
 
 addFormListener();
 // Define os parâmetros iniciais.
-$("#nCustomersField").val("500");
-$("#nRoundsField").val("3100");
+$("#nCustomersField").val("65");
+$("#nRoundsField").val("3071");
 $("#rhoField").val("0.4");
