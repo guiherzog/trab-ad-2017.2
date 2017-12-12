@@ -9,10 +9,14 @@
     "dist": "electron-builder"
   },
   "build": {
-  "appId": "simulatorAD",
+  "appId": "SimulatorAD",
   "mac": {
       "category": "simulator"
-    }
+    },
+  "win": {
+      "target": "portable"
+    },
+  "compression": "maximum"
   },
   "repository": "https://github.com/guiherzog/trab-ad-2017.2",
   "keywords": [
