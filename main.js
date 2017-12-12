@@ -17,11 +17,10 @@ function createWindow () {
     width: 1280,
     height: 768,
     // frame: false,
-    // titleBarStyle: 'hidden'
   })
 
   // Remove menu;
-  // mainWindow.setMenu(null);
+  mainWindow.setMenu(null);
 
   mainWindow.maximize();
 
